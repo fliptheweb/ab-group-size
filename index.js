@@ -7,7 +7,7 @@ let initData = {
   beta: 0.2,
   convertion1: 3 / 100,
   convertion2: 3.2 / 100, // or delta_convertion: 5
-  ratio: 1,
+  ratio: 2,
   trafficMax: 500000
 };
 
