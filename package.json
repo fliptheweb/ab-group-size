@@ -1,0 +1,19 @@
+{
+  "name": "ab_calculator",
+  "version": "0.0.1",
+  "description": "Calculator for A/B testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ab",
+    "testing",
+    "split"
+  ],
+  "author": "fliptheweb",
+  "license": "ISC",
+  "engine": {
+    "node": ">6"
+  }
+}

@@ -1,8 +1,59 @@
+"use strict";
+// Let's copypast from many sources begin!😅
+
 const Z_MAX = 6; // Maximum �z value
 const ROUND_FLOAT = 6; // Decimal places to round numbers
 
+/*  The following JavaScript functions for calculating normal and
+   chi-square probabilities and critical values were adapted by
+   John Walker from C implementations
+   written by Gary Perlman of Wang Institute, Tyngsboro, MA
+   01879.  Both the original C code and this JavaScript edition
+   are in the public domain.  */
+
+/*  POZ  --  probability of normal z value
+
+   Adapted from a polynomial approximation in:
+           Ibbetson D, Algorithm 209
+           Collected Algorithms of the CACM 1963 p. 616
+   Note:
+           This routine has six digit accuracy, so it is only useful for absolute
+           z values <= 6.  For z values > to 6.0, poz() returns 0.0.
+*/
+
+function poz(z) {
+   var y, x, w;
+
+   if (z == 0.0) {
+       x = 0.0;
+   } else {
+       y = 0.5 * Math.abs(z);
+       if (y > (Z_MAX * 0.5)) {
+           x = 1.0;
+       } else if (y < 1.0) {
+           w = y * y;
+           x = ((((((((0.000124818987 * w
+                    - 0.001075204047) * w + 0.005198775019) * w
+                    - 0.019198292004) * w + 0.059054035642) * w
+                    - 0.151968751364) * w + 0.319152932694) * w
+                    - 0.531923007300) * w + 0.797884560593) * y * 2.0;
+       } else {
+           y -= 2.0;
+           x = (((((((((((((-0.000045255659 * y
+                          + 0.000152529290) * y - 0.000019538132) * y
+                          - 0.000676904986) * y + 0.001390604284) * y
+                          - 0.000794620820) * y - 0.002034254874) * y
+                          + 0.006549791214) * y - 0.010557625006) * y
+                          + 0.011630447319) * y - 0.009279453341) * y
+                          + 0.005353579108) * y - 0.002141268741) * y
+                          + 0.000535310849) * y + 0.999936657524;
+       }
+   }
+   return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+}
+
 /*  TRIMFLOAT  --  Trim floating point number to a given
-                   number of digits after the decimal point.  */
+   number of digits after the decimal point.  */
 
 function trimfloat(n, digits) {
   var dp, nn, i;
@@ -90,12 +141,24 @@ function critz(p) {
     return(zval);
 }
 
+function calculateZValue(probability) {
+  // @todo in future get implementation from http://jstat.github.io/test.html ?
+  // Calculation formula from http://sampson.byu.edu/courses/z2p2z-calculator.html
+  // Probability (p): p = 1 - α/2.
+  if (probability < 0 || probability > 1) {
+    // @todo throw exception
+    console.log("Probability (Q) must be between 0 and 1.");
+  } else {
+    return trimfloat(critz(probability), ROUND_FLOAT);
+  }
+}
 
-let normalizeInitData = (initData) -> {
+
+let normalizeInitData = (initData) => {
 // @todo normalize string values with ., and space
 // @todo validate
   return {
-    ...initData,
+    // ...initData,
     alpha: initData.alpha / 100,
     beta: initData.beta / 100,
     significance: 1 - (initData.alpha / 100),
@@ -107,17 +170,17 @@ let normalizeInitData = (initData) -> {
 
 // Sample size
 let initData = {
-  alpha: 5,
-  beta: 20,
-  convertion1: 3,
-  convertion2: 3.2, // or delta_convertion: 5
+  alpha: 0.05,
+  beta: 0.2,
+  convertion1: 3 / 100,
+  convertion2: 3.2 / 100, // or delta_convertion: 5
   ratio: 1,
   trafficMax: 500000
 }
 
-console.log(getSampleSize(normalizeInitData(initData)))
+// console.log(getSampleSize(normalizeInitData(initData)))
 
-getSampleSize = ({alpha, beta, convertion1, convertion2, ration, trafficMax}) -> {
+let getSampleSize = ({alpha, beta, convertion1, convertion2, ratio, trafficMax}) => {
   // Calculation formula from http://clincalc.com/Stats/SampleSize.aspx
   // convertion1 (p1), convertion2 (p2) = proportion (incidence) of groups #1 and #2
   // delta, Δ = |p2-p1| = absolute difference between two proportions
@@ -127,23 +190,22 @@ getSampleSize = ({alpha, beta, convertion1, convertion2, ration, trafficMax}) ->
   // β = probability of type II error (usually 0.2)
   // z = critical Z value for a given α or β
   // ratio, K = ratio of sample size for group #2 to group #1
-  let delta = convertion1 - convertion2;
+  let delta = Math.abs(convertion1 - convertion2);
   let q1 = 1 - convertion1;
   let q2 = 1 - convertion2;
   let p_result = (convertion1 + ratio * convertion2) / (1 + ratio);
   let q_result = 1 - p_result;
   let z_value1 = calculateZValue(1 - alpha/2);
   let z_value2 = calculateZValue(1 - beta);
-  let n = Math.pow((z_value1 * Math.sqrt(p_result * q_result * (1 + 1/ratio)) + z_value2 * Math.sqrt(convertion1 * q1 + ((convertion2 * q2)/ratio))), 2) / Math.pow(delta, 2)
+  console.log(delta, q1, q2, p_result, q_result, z_value1, z_value2);
+  let n1 = Math.pow((z_value1 * Math.sqrt(p_result * q_result * (1 + 1/ratio)) + z_value2 * Math.sqrt(convertion1 * q1 + ((convertion2 * q2)/ratio))), 2) / Math.pow(delta, 2)
+
+  return {
+    n1,
+    n2: ratio * n1
+  }
 }
 
-calculateZValue = (probability) -> {
-  // @todo implementation from http://jstat.github.io/test.html ?
-  // Calculation formula from http://sampson.byu.edu/courses/z2p2z-calculator.html
-  // Probability (p): p = 1 - α/2.
-  if (probability < 0 || probability > 1) {
-    console.log("Probability (Q) must be between 0 and 1.");
-  } else {
-    trimfloat(critz(probability), ROUND_FLOAT);
-  }
+module.exports = {
+  sampleSize: getSampleSize
 }
