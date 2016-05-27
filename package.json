@@ -5,10 +5,12 @@
   "main": "src/main",
   "author": "Artur Kornakov <itisshortemailaddress@gmail.com>",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava ./test/"
   },
   "keywords": [
     "ab",
+    "ab test",
+    "split test",
     "testing",
     "split"
   ],
@@ -17,6 +19,7 @@
     "node": ">=6"
   },
   "devDependencies": {
+    "ava": "^0.15.1",
     "eslint": "^2.10.2",
     "eslint-config-standard": "^5.3.1",
     "eslint-plugin-promise": "^1.3.0",
