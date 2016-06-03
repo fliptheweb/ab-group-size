@@ -1,6 +1,9 @@
 'use strict'
 
 const Z_MAX = 6; // Maximum z value
+const DEFAULT_ALPHA = 5;
+const DEFAULT_BETA = 20;
+const DEFAULT_RATIO = 1;
 
 let abCalculator = {
   /*
@@ -14,38 +17,57 @@ let abCalculator = {
     n1 = sample size for group #1
     n2 = sample size for group #2
   */
-  getSampleSize: (data) => {
-    let {alpha, beta, convertion1, convertion2, ratio} = abCalculator._normalizeData(data);
+  getSamplesSize: (data) => {
+    let {alpha, beta, convertions, ratio} = abCalculator._validateData(data);
 
-    let delta = Math.abs(convertion1 - convertion2);
-    let q1 = 1 - convertion1;
-    let q2 = 1 - convertion2;
-    let pResult = (convertion1 + ratio * convertion2) / (1 + ratio);
+    let delta = Math.abs(convertions[0] - convertions[1]);
+    let q1 = 1 - convertions[0];
+    let q2 = 1 - convertions[1];
+    let pResult = (convertions[0] + ratio * convertions[1]) / (1 + ratio);
     let qResult = 1 - pResult;
-    let zValue1 = abCalculator._computeCriticalNormalZValue(1 - alpha / 2);
-    let zValue2 = abCalculator._computeCriticalNormalZValue(1 - beta);
+    let zValue1 = abCalculator._computeCriticalNormalZValue(1 - (alpha / 100) / 2);
+    let zValue2 = abCalculator._computeCriticalNormalZValue(1 - (beta / 100));
 
-    console.log(delta, q1, q2, pResult, qResult, zValue1, zValue2);
+    console.log(pResult, qResult);
+
     let n1 = Math.pow(
       (zValue1 * Math.sqrt(
         pResult * qResult * (1 + 1 / ratio)
       ) + zValue2 * Math.sqrt(
-        convertion1 * q1 + ((convertion2 * q2) / ratio))
+        convertions[0] * q1 + ((convertions[1] * q2) / ratio))
       ),
       2
     ) / Math.pow(delta, 2);
+    console.log(n1)
 
-    // winner?
     return {
-      group1: parseInt(n1, 10),
-      group2: parseInt(ratio * n1, 10)
+      groupSizes: [parseInt(n1, 10), parseInt(ratio * n1, 10)]
     }
   },
 
-  _normalizeData: (data) => {
-    // Normalize and validate
-    // console.log("Probability (Q) must be between 0 and 1.");
-    return data;
+  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertions, ratio = DEFAULT_RATIO}) => {
+    alpha = parseFloat(alpha)
+    beta = parseFloat(beta)
+    convertions = [parseFloat(convertions[0]), parseFloat(convertions[1])]
+    ratio = parseFloat(ratio)
+
+    if (alpha < 0 || alpha > 100) {
+      console.warn(`Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`);
+      alpha = DEFAULT_ALPHA;
+    }
+    if (beta < 0 || beta > 100) {
+      console.warn(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
+      beta = DEFAULT_BETA;
+    }
+    if (convertions.length !== 2) {
+      console.warn('You must pass 2 convertions value, like [3, 3.2].');
+    }
+    return {
+      convertions,
+      ratio,
+      alpha,
+      beta
+    }
   },
 
   // @todo in future get implementation from http://jstat.github.io/test.html ?
@@ -127,4 +149,10 @@ let abCalculator = {
   }
 }
 
-module.exports = abCalculator;
+module.exports = (data) => {
+  if (data) {
+    return abCalculator.getSamplesSize(data);
+  } else {
+    return abCalculator;
+  }
+}
