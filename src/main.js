@@ -5,7 +5,7 @@ const DEFAULT_ALPHA = 5;
 const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
 
-let abCalculator = {
+let ABGroupSize = {
   /*
     Calculation formula from http://clincalc.com/Stats/SampleSize.aspx
     convertion1 (p1), convertion2 (p2) = proportion (incidence) of groups #1 and #2
@@ -17,32 +17,34 @@ let abCalculator = {
     n1 = sample size for group #1
     n2 = sample size for group #2
   */
-  getSamplesSize: (data) => {
-    let {alpha, beta, convertions, ratio} = abCalculator._validateData(data);
+  getGroupSize: (data) => {
+    let {alpha, beta, convertions, ratio} = ABGroupSize._validateData(data);
+
+    alpha = alpha / 100;
+    beta = beta / 100;
+    convertions = [convertions[0] / 100, convertions[1] / 100];
 
     let delta = Math.abs(convertions[0] - convertions[1]);
     let q1 = 1 - convertions[0];
     let q2 = 1 - convertions[1];
     let pResult = (convertions[0] + ratio * convertions[1]) / (1 + ratio);
     let qResult = 1 - pResult;
-    let zValue1 = abCalculator._computeCriticalNormalZValue(1 - (alpha / 100) / 2);
-    let zValue2 = abCalculator._computeCriticalNormalZValue(1 - (beta / 100));
+    let zValue1 = ABGroupSize._computeCriticalNormalZValue(1 - alpha / 2);
+    let zValue2 = ABGroupSize._computeCriticalNormalZValue(1 - beta);
 
-    console.log(pResult, qResult);
-
-    let n1 = Math.pow(
+    let groupSize1 = Math.pow(
       (zValue1 * Math.sqrt(
         pResult * qResult * (1 + 1 / ratio)
       ) + zValue2 * Math.sqrt(
         convertions[0] * q1 + ((convertions[1] * q2) / ratio))
-      ),
-      2
-    ) / Math.pow(delta, 2);
-    console.log(n1)
+      )
+    , 2) / Math.pow(delta, 2);
+    let groupSize2 = ratio * groupSize1;
 
-    return {
-      groupSizes: [parseInt(n1, 10), parseInt(ratio * n1, 10)]
-    }
+    return [
+      parseInt(Math.round(groupSize1), 10),
+      parseInt(Math.round(groupSize2), 10)
+    ];
   },
 
   _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertions, ratio = DEFAULT_RATIO}) => {
@@ -62,6 +64,7 @@ let abCalculator = {
     if (convertions.length !== 2) {
       console.warn('You must pass 2 convertions value, like [3, 3.2].');
     }
+
     return {
       convertions,
       ratio,
@@ -96,7 +99,7 @@ let abCalculator = {
     }
 
     while ((maxz - minz) > Z_EPSILON) {
-      pval = abCalculator._probabilityOfNormalZValue(zval);
+      pval = ABGroupSize._probabilityOfNormalZValue(zval);
       if (pval > probability) {
         maxz = zval;
       } else {
@@ -151,8 +154,8 @@ let abCalculator = {
 
 module.exports = (data) => {
   if (data) {
-    return abCalculator.getSamplesSize(data);
+    return ABGroupSize.getGroupSize(data);
   } else {
-    return abCalculator;
+    return ABGroupSize;
   }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-let abCalculator = require('./src/main.js');
+let ABGroupSize = require('./src/main.js');
 
 let initData = {
   alpha: 5,
@@ -8,4 +8,4 @@ let initData = {
   convertions: [3, 3.2]
 };
 
-console.log(abCalculator(initData));
+console.log(ABGroupSize(initData));
