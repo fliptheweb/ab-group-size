@@ -20,6 +20,7 @@ program
       console.log('Group sizes for A/B test – ', ABGroupSize({
         alpha: program.alpha,
         beta: program.beta,
+        ratio: program.ratio,
         convertions: program.args[0].split(',')
       }))
     } catch (error) {
