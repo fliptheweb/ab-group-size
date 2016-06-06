@@ -1,5 +1,5 @@
 import test from 'ava';
-import ABGroupSize from '../src/main';
+import ABGroupSize from '../src/index';
 
 const INIT_DATA_SAMPLES = [
   {

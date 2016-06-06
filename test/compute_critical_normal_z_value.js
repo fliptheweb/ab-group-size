@@ -1,6 +1,6 @@
 import test from 'ava';
 import float from 'float';
-import ABGroupSize from '../src/main';
+import ABGroupSize from '../src/index';
 
 // Random values from table
 // http://www.mathcelebrity.com/zcritical.php?a=+0.01&pl=Calculate+Critical+Z+Value
