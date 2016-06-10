@@ -1,4 +1,4 @@
-# AB Group Size
+# AB Group Size ![travis](https://travis-ci.org/fliptheweb/ab-group-size.svg)
 Simple calculator for computing group size of A/B tests.
 
 Installation:
