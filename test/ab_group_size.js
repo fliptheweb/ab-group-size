@@ -20,9 +20,9 @@ const INIT_DATA_SAMPLES = [
 ]
 
 test('With alpha and beta', t => {
-  t.is(ABGroupSize(INIT_DATA_SAMPLES[0].data), INIT_DATA_SAMPLES[0].result);
+  t.deepEqual(ABGroupSize(INIT_DATA_SAMPLES[0].data), INIT_DATA_SAMPLES[0].result);
 });
 
 test('With ratio', t => {
-  t.is(ABGroupSize(INIT_DATA_SAMPLES[0].data), INIT_DATA_SAMPLES[0].result);
+  t.deepEqual(ABGroupSize(INIT_DATA_SAMPLES[0].data), INIT_DATA_SAMPLES[0].result);
 });
