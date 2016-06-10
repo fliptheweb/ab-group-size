@@ -5,6 +5,7 @@
   "repository": "https://github.com/fliptheweb/ab-group-size",
   "main": "./src/index.js",
   "bin": "./src/cli.js",
+  "browser": "./src/browser.js",
   "author": "Artur Kornakov <itisshortemailaddress@gmail.com>",
   "scripts": {
     "test": "ava ./test/"
