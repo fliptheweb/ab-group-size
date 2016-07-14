@@ -61,7 +61,7 @@ let ABGroupSize = {
       console.warn(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
       beta = DEFAULT_BETA;
     }
-    if (convertions.length !== 2) {
+    if (!convertions || convertions.length !== 2) {
       try {
         throw new Error('You must pass 2 convertions value, like [3, 3.2].');
       } catch (err) {
