@@ -2,7 +2,7 @@ module.exports = {
   entry: './src/browser.js',
   output: {
     path: './dist',
-    filename: 'app.bundle.js'
+    filename: 'ab_calculator.js'
   },
   module: {
     loaders: [{

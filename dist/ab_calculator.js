@@ -46,14 +46,12 @@
 
 	'use strict';
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var ABGroupSize = __webpack_require__(1);
 
 	var initData = {
 	  alpha: 5, // optional
 	  beta: 20, // optional
-	  convertions: ['', ''],
+	  convertions: [1.2, 1.4],
 	  currentGroupSizes: [], // optional
 	  deltaConvertion: '' // optional
 	  // maxTrafficPerGroup: 10000
@@ -90,31 +88,53 @@
 
 	  // validate data
 	  result.groupSizes = ABGroupSize(data);
+
 	  if (data.deltaConvertion) {
-	    result.groupSizesDelta = ABGroupSize(_extends({}, data, {
+	    result.deltaGroupSizes = ABGroupSize(Object.assign({}, data, {
 	      convertions: [data.convertions[0], data.convertions[0] + data.convertions[0] / 100 * data.deltaConvertion]
 	    }));
 	  }
 
 	  // Сравниваем с текущими размерами групп
 	  // Сравниваем с дельтой если есть
-	  if (data.currentGroupSizes) {
+	  if (data.currentGroupSizes && data.currentGroupSizes.length === 2) {
+	    var isEnoughData = false;
+
 	    if (data.currentGroupSizes[0] >= result.groupSizes[0] && data.currentGroupSizes[1] >= result.groupSizes[1]) {
-	      result.text = 'It`s enough traffic in groups';
+	      isEnoughData = true;
 	    }
 
-	    if (data.currentGroupSizes[0] >= result.groupSizesDelta[0] && data.currentGroupSizes[1] >= result.groupSizesDelta[1]) {
-	      result.text = 'It`s enough traffic for your delta convertions';
+	    // if (data.currentGroupSizes[0] >= result.deltaGroupSizes[0] && data.currentGroupSizes[1] >= result.deltaGroupSizes[1]) {
+	    //   result.text = 'It`s enough traffic for your delta convertions';
+	    //   result.type = 'ENOUGH_TRAFFIC_DELTA';
+	    // }
+
+	    // Определяем победителя
+	    if (isEnoughData) {
+	      if (data.convertions[0] > data.conversions[1]) {
+	        result.text = 'First group win';
+	      } else if (data.convertions[0] < data.conversions[1]) {
+	        result.text = 'Second group win';
+	      } else {
+	        result.text = 'Variants are equal';
+	      }
+	    }
+
+	    if (!isEnoughData) {
+	      var missingAmount = '';
+	      if (result.groupSizes[0] === result.groupSizes[1]) {
+	        missingAmount = result.groupSizes[0] - data.currentGroupSizes[0] + ' more in both groups';
+	      } else {
+	        missingAmount = result.groupSizes[0] - data.currentGroupSizes[0] + ' in first and ' + (result.groupSizes[0] - data.currentGroupSizes[0]) + ' in second group';
+	      }
+	      result.text = 'It`s not enough traffic in groups, need ' + missingAmount + '.';
 	    }
 	  }
 
-	  // Определяем победителя
-	  if (data.currentGroupSizes) {}
-
-	  //
+	  return result;
 	};
 
-	ABGroupSizeGui(initData);
+	document.getElementById('result').innerHTML = JSON.stringify(ABGroupSizeGui(initData), null, 2);
 
 /***/ },
 /* 1 */
