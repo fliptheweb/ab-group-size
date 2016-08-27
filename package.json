@@ -11,7 +11,7 @@
     "test": "ava ./test/",
     "build": "webpack",
     "watch": "webpack --color --watch",
-    "dev-server": "webpack-dev-server --inline --content-base dist/"
+    "dev-server": "webpack-dev-server --inline --port 8888 --open --content-base dist/"
   },
   "keywords": [
     "ab",
@@ -23,6 +23,9 @@
   "license": "MIT",
   "engines": {
     "node": ">=6"
+  },
+  "dependencies": {
+    "commander": "^2.9.0"
   },
   "devDependencies": {
     "ava": "^0.15.1",
@@ -40,8 +43,5 @@
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   },
-  "preferGlobal": true,
-  "dependencies": {
-    "commander": "^2.9.0"
-  }
+  "preferGlobal": true
 }
