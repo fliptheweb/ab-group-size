@@ -4,6 +4,7 @@ const Z_MAX = 6; // Maximum z value
 const DEFAULT_ALPHA = 5;
 const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
+const CONVERSION_ACCURACY = 2;
 
 let ABGroupSize = {
   /*
@@ -75,6 +76,10 @@ let ABGroupSize = {
       alpha,
       beta
     }
+  },
+
+  convertionToConversionRate: (sizeOfGroup, conversion) => {
+    return (parseInt(conversion) / (parseInt(sizeOfGroup) / 100)).toFixed(CONVERSION_ACCURACY);
   },
 
   // @todo in future get implementation from http://jstat.github.io/test.html ?

@@ -157,11 +157,11 @@ let maxTraffic = document.getElementById('max-traffic');
 
 let renderCalculator = (event) => {
   let conversions = [
-    calculateConversionRate(aGroupSize.value, aConversion.value),
-    calculateConversionRate(bGroupSize.value, bConversion.value)
+    ABGroupSize().convertionToConversionRate(aGroupSize.value, aConversion.value),
+    ABGroupSize().convertionToConversionRate(bGroupSize.value, bConversion.value)
   ];
-  aConversionRate.innerHTML = conversions[0];
-  bConversionRate.innerHTML = conversions[1];
+  aConversionRate.innerHTML = conversions[0] + '%';
+  bConversionRate.innerHTML = conversions[1] + '%';
 
   let data = Object.assign(
     {},
@@ -182,10 +182,7 @@ let renderCalculator = (event) => {
   document.getElementById('result').innerHTML = JSON.stringify(ABGroupSizeGui(data), null, 2);
 }
 
-let calculateConversionRate = (size, conversion) => {
-  return parseInt(conversion) / (parseInt(size) / 100) + '%';
-}
-
+// Bind render to all controls
 [alpha, beta, deltaСonversion, maxTraffic, aGroupSize, bGroupSize, aConversion, bConversion].forEach((control) => {
   ['change', 'click', 'keyup'].forEach((eventName) => {
     control.addEventListener(eventName, renderCalculator);
@@ -193,4 +190,4 @@ let calculateConversionRate = (size, conversion) => {
 })
 
 // Initial
-renderCalculator()
+renderCalculator();
