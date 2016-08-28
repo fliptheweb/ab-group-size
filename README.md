@@ -13,7 +13,7 @@ let ABGroupSize = require('ab-group-size');
 ABGroupSize({
   alpha: 5,                // in percent, default = 5
   beta: 20,                // in percent, default = 20
-  convertions: [3.0, 3.2], // in percent, per group, only 2 groups now
+  conversions: [3.0, 3.2], // in percent, per group, only 2 groups now
   ratio: 1                 // ratio of group sizes, default = 1
 })
 ```

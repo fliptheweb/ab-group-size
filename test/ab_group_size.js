@@ -6,13 +6,13 @@ const INIT_DATA_SAMPLES = [
     data: {
       alpha: 10,
       beta: 10,
-      convertions: [3, 3.2]
+      conversions: [3, 3.2]
     },
     result: [128623, 128623]
   },
   {
     data: {
-      convertions: [10, 15],
+      conversions: [10, 15],
       ratio: 2
     },
     result: [525, 1050]

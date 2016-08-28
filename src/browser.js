@@ -5,9 +5,10 @@ let ABGroupSize = require('../src/index');
 let initData = {
   alpha: 5,  // optional
   beta: 20,  // optional
-  convertions: [1.2, 1.4],
+  conversions: [1.2, 1.4],
+  conversionRates: [1.2, 1.4], // refactor
   currentGroupSizes: [], // optional
-  deltaConvertion: 5   // optional
+  deltaСonversion: 5   // optional
   // maxTrafficPerGroup: 10000
 }
 
@@ -18,8 +19,8 @@ const RESULTS = {
   NOT_ENOUGH: (strings) =>
     `It\`s not enough traffic in groups, need ${strings[0]}.`,
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
-  NOT_MINIMUM_DELTA_CONVERTION: ([deltaConvertion, currentDeltaConversion]) =>
-    `Waiting for minimum delta between conversion (${deltaConvertion}). Current – ${currentDeltaConversion}`
+  NOT_MINIMUM_DELTA_conversion: ([deltaСonversion, currentdeltaСonversion]) =>
+    `Waiting for minimum delta between conversion (${deltaСonversion}). Current – ${currentdeltaСonversion}`
 }
 
 let getTextOfResult = (resultCode, ...params) => {
@@ -32,10 +33,10 @@ let getTextOfResult = (resultCode, ...params) => {
   }
 }
 
-let validateData = ({alpha, beta, convertions, currentGroupSizes, deltaConvertion}) => {
-  if (!convertions || convertions.length !== 2) {
+let validateData = ({alpha, beta, conversions, currentGroupSizes, deltaСonversion}) => {
+  if (!conversions || conversions.length !== 2) {
     try {
-      throw new Error('You must pass 2 convertions value, like [3, 3.2].');
+      throw new Error('You must pass 2 conversions value, like [3, 3.2].');
     } catch (err) {
       return err;
     }
@@ -44,15 +45,15 @@ let validateData = ({alpha, beta, convertions, currentGroupSizes, deltaConvertio
   let validatedData = {
     alpha: parseFloat(alpha),
     beta: parseFloat(beta),
-    convertions: [parseFloat(convertions[0]), parseFloat(convertions[1])]
+    conversions: [parseFloat(conversions[0]), parseFloat(conversions[1])]
   }
 
   if (currentGroupSizes && currentGroupSizes.length === 2) {
     validatedData.currentGroupSizes = [parseFloat(currentGroupSizes[0]), parseFloat(currentGroupSizes[1])];
   }
 
-  if (deltaConvertion) {
-    validatedData.deltaConvertion = parseFloat(deltaConvertion);
+  if (deltaСonversion) {
+    validatedData.deltaСonversion = parseFloat(deltaСonversion);
   }
 
   return validatedData;
@@ -62,20 +63,20 @@ let ABGroupSizeGui = (params) => {
   let data = validateData(params);
   let result = {};
   // определиться как мерить delta, в процентах между конверсиями?
-  let currentDeltaConversion = Math.abs(data.convertions[0] - data.convertions[1]);
+  let currentdeltaСonversion = Math.abs(data.conversions[0] - data.conversions[1]);
 
   // validate data
   result.groupSizes = ABGroupSize(data);
   result.winner = false;
 
-  if (data.deltaConvertion) {
+  if (data.deltaСonversion) {
     result.deltaGroupSizes = ABGroupSize(Object.assign(
       {},
       data,
       {
-        convertions: [
-          data.convertions[0],
-          data.convertions[0] + (data.convertions[0] / 100 * data.deltaConvertion)
+        conversions: [
+          data.conversions[0],
+          data.conversions[0] + (data.conversions[0] / 100 * data.deltaСonversion)
         ]
       }
     ));
@@ -96,10 +97,10 @@ let ABGroupSizeGui = (params) => {
 
     // Определяем победителя
     if (isEnoughData) {
-      if (data.convertions[0] > data.conversions[1]) {
+      if (data.conversions[0] > data.conversions[1]) {
         result.winner = 1;
         result.text = getTextOfResult('WINNER_FIRST');
-      } else if (data.convertions[0] < data.conversions[1]) {
+      } else if (data.conversions[0] < data.conversions[1]) {
         result.winner = 2;
         result.text = getTextOfResult('WINNER_SECOND');
       } else {
@@ -119,12 +120,12 @@ let ABGroupSizeGui = (params) => {
     }
 
     // Если текущая разница конверсий больше, чем нужно, то победитель есть, если нет, то нет
-    if (data.deltaConvertion && data.deltaConvertion > currentDeltaConversion) {
+    if (data.deltaСonversion && data.deltaСonversion > currentdeltaСonversion) {
       result.winner = false;
-      result.text = getTextOfResult('NOT_MINIMUM_DELTA_CONVERTION', data.deltaConvertion, currentDeltaConversion);
+      result.text = getTextOfResult('NOT_MINIMUM_DELTA_conversion', data.deltaСonversion, currentdeltaСonversion);
 
       // if (data.currentGroupSizes[0] >= result.deltaGroupSizes[0] && data.currentGroupSizes[1] >= result.deltaGroupSizes[1]) {
-      //   result.text = 'It`s enough traffic for your delta convertions';
+      //   result.text = 'It`s enough traffic for your delta conversions';
       //   result.type = 'ENOUGH_TRAFFIC_DELTA';
       // }
     }
@@ -143,14 +144,25 @@ let ABGroupSizeGui = (params) => {
 
 let aGroupSize = document.getElementById('a-group-size');
 let bGroupSize = document.getElementById('b-group-size');
+let aConversion = document.getElementById('a-conversion');
+let bConversion = document.getElementById('b-conversion');
+let aConversionRate = document.getElementById('a-conversion-rate');
+let bConversionRate = document.getElementById('b-conversion-rate');
 
 // Settings
 let alpha = document.getElementById('alpha');
 let beta = document.getElementById('beta');
-let deltaConvertion = document.getElementById('delta-conversion');
+let deltaСonversion = document.getElementById('delta-conversion');
 let maxTraffic = document.getElementById('max-traffic');
 
 let renderCalculator = (event) => {
+  let conversions = [
+    calculateConversionRate(aGroupSize.value, aConversion.value),
+    calculateConversionRate(bGroupSize.value, bConversion.value)
+  ];
+  aConversionRate.innerHTML = conversions[0];
+  bConversionRate.innerHTML = conversions[1];
+
   let data = Object.assign(
     {},
     initData,
@@ -161,17 +173,20 @@ let renderCalculator = (event) => {
         aGroupSize.value,
         bGroupSize.value
       ],
-      convertions: [
-        1.2, 1.4
-      ],
+      conversions: conversions,
       maxTrafficPerGroup: maxTraffic.value,
-      deltaConvertion: deltaConvertion.value
+      deltaСonversion: deltaСonversion.value
     }
   )
+
   document.getElementById('result').innerHTML = JSON.stringify(ABGroupSizeGui(data), null, 2);
 }
 
-[alpha, beta, deltaConvertion, maxTraffic].forEach((control) => {
+let calculateConversionRate = (size, conversion) => {
+  return parseInt(conversion) / (parseInt(size) / 100) + '%';
+}
+
+[alpha, beta, deltaСonversion, maxTraffic, aGroupSize, bGroupSize, aConversion, bConversion].forEach((control) => {
   ['change', 'click', 'keyup'].forEach((eventName) => {
     control.addEventListener(eventName, renderCalculator);
   })

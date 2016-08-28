@@ -8,7 +8,7 @@ const DEFAULT_RATIO = 1;
 let ABGroupSize = {
   /*
     Calculation formula from http://clincalc.com/Stats/SampleSize.aspx
-    convertion1 (p1), convertion2 (p2) = proportion (incidence) of groups #1 and #2
+    conversion1 (p1), conversion2 (p2) = proportion (incidence) of groups #1 and #2
     delta, Δ = |p2-p1| = absolute difference between two proportions
     α = probability of type I error (usually 0.05)
     β = probability of type II error (usually 0.2)
@@ -18,16 +18,16 @@ let ABGroupSize = {
     n2 = sample size for group #2
   */
   getGroupSize: (data) => {
-    let {alpha, beta, convertions, ratio} = ABGroupSize._validateData(data);
+    let {alpha, beta, conversions, ratio} = ABGroupSize._validateData(data);
 
     alpha = alpha / 100;
     beta = beta / 100;
-    convertions = [convertions[0] / 100, convertions[1] / 100];
+    conversions = [conversions[0] / 100, conversions[1] / 100];
 
-    let delta = Math.abs(convertions[0] - convertions[1]);
-    let q1 = 1 - convertions[0];
-    let q2 = 1 - convertions[1];
-    let pResult = (convertions[0] + ratio * convertions[1]) / (1 + ratio);
+    let delta = Math.abs(conversions[0] - conversions[1]);
+    let q1 = 1 - conversions[0];
+    let q2 = 1 - conversions[1];
+    let pResult = (conversions[0] + ratio * conversions[1]) / (1 + ratio);
     let qResult = 1 - pResult;
     let zValue1 = ABGroupSize._computeCriticalNormalZValue(1 - alpha / 2);
     let zValue2 = ABGroupSize._computeCriticalNormalZValue(1 - beta);
@@ -36,7 +36,7 @@ let ABGroupSize = {
       (zValue1 * Math.sqrt(
         pResult * qResult * (1 + 1 / ratio)
       ) + zValue2 * Math.sqrt(
-        convertions[0] * q1 + ((convertions[1] * q2) / ratio))
+        conversions[0] * q1 + ((conversions[1] * q2) / ratio))
       )
     , 2) / Math.pow(delta, 2);
     let groupSize2 = ratio * groupSize1;
@@ -47,10 +47,10 @@ let ABGroupSize = {
     ];
   },
 
-  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertions, ratio = DEFAULT_RATIO}) => {
+  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversions, ratio = DEFAULT_RATIO}) => {
     alpha = parseFloat(alpha)
     beta = parseFloat(beta)
-    convertions = [parseFloat(convertions[0]), parseFloat(convertions[1])]
+    conversions = [parseFloat(conversions[0]), parseFloat(conversions[1])]
     ratio = parseFloat(ratio)
 
     if (alpha < 0 || alpha > 100) {
@@ -61,16 +61,16 @@ let ABGroupSize = {
       console.warn(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
       beta = DEFAULT_BETA;
     }
-    if (!convertions || convertions.length !== 2) {
+    if (!conversions || conversions.length !== 2) {
       try {
-        throw new Error('You must pass 2 convertions value, like [3, 3.2].');
+        throw new Error('You must pass 2 conversions value, like [3, 3.2].');
       } catch (err) {
         return err;
       }
     }
 
     return {
-      convertions,
+      conversions,
       ratio,
       alpha,
       beta

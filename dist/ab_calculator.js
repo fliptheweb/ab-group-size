@@ -51,22 +51,22 @@
 	var initData = {
 	  alpha: 5, // optional
 	  beta: 20, // optional
-	  convertions: [1.2, 1.4],
+	  conversions: [1.2, 1.4],
 	  currentGroupSizes: [], // optional
-	  deltaConvertion: '' // optional
+	  deltaconversion: '' // optional
 	  // maxTrafficPerGroup: 10000
 	};
 
 	var validateData = function validateData(_ref) {
 	  var alpha = _ref.alpha;
 	  var beta = _ref.beta;
-	  var convertions = _ref.convertions;
+	  var conversions = _ref.conversions;
 	  var currentGroupSizes = _ref.currentGroupSizes;
-	  var deltaConvertion = _ref.deltaConvertion;
+	  var deltaconversion = _ref.deltaconversion;
 
-	  if (!convertions || convertions.length !== 2) {
+	  if (!conversions || conversions.length !== 2) {
 	    try {
-	      throw new Error('You must pass 2 convertions value, like [3, 3.2].');
+	      throw new Error('You must pass 2 conversions value, like [3, 3.2].');
 	    } catch (err) {
 	      return err;
 	    }
@@ -75,9 +75,9 @@
 	  return {
 	    alpha: parseFloat(alpha),
 	    beta: parseFloat(beta),
-	    convertions: [parseFloat(convertions[0]), parseFloat(convertions[1])],
+	    conversions: [parseFloat(conversions[0]), parseFloat(conversions[1])],
 	    currentGroupSizes: [parseFloat(currentGroupSizes[0]), parseFloat(currentGroupSizes[1])],
-	    deltaConvertion: parseFloat(deltaConvertion)
+	    deltaconversion: parseFloat(deltaconversion)
 	  };
 	};
 
@@ -89,9 +89,9 @@
 	  // validate data
 	  result.groupSizes = ABGroupSize(data);
 
-	  if (data.deltaConvertion) {
+	  if (data.deltaconversion) {
 	    result.deltaGroupSizes = ABGroupSize(Object.assign({}, data, {
-	      convertions: [data.convertions[0], data.convertions[0] + data.convertions[0] / 100 * data.deltaConvertion]
+	      conversions: [data.conversions[0], data.conversions[0] + data.conversions[0] / 100 * data.deltaconversion]
 	    }));
 	  }
 
@@ -105,15 +105,15 @@
 	    }
 
 	    // if (data.currentGroupSizes[0] >= result.deltaGroupSizes[0] && data.currentGroupSizes[1] >= result.deltaGroupSizes[1]) {
-	    //   result.text = 'It`s enough traffic for your delta convertions';
+	    //   result.text = 'It`s enough traffic for your delta conversions';
 	    //   result.type = 'ENOUGH_TRAFFIC_DELTA';
 	    // }
 
 	    // Определяем победителя
 	    if (isEnoughData) {
-	      if (data.convertions[0] > data.conversions[1]) {
+	      if (data.conversions[0] > data.conversions[1]) {
 	        result.text = 'First group win';
-	      } else if (data.convertions[0] < data.conversions[1]) {
+	      } else if (data.conversions[0] < data.conversions[1]) {
 	        result.text = 'Second group win';
 	      } else {
 	        result.text = 'Variants are equal';
@@ -150,7 +150,7 @@
 	var ABGroupSize = {
 	  /*
 	    Calculation formula from http://clincalc.com/Stats/SampleSize.aspx
-	    convertion1 (p1), convertion2 (p2) = proportion (incidence) of groups #1 and #2
+	    conversion1 (p1), conversion2 (p2) = proportion (incidence) of groups #1 and #2
 	    delta, Δ = |p2-p1| = absolute difference between two proportions
 	    α = probability of type I error (usually 0.05)
 	    β = probability of type II error (usually 0.2)
@@ -164,23 +164,23 @@
 
 	    var alpha = _ABGroupSize$_validat.alpha;
 	    var beta = _ABGroupSize$_validat.beta;
-	    var convertions = _ABGroupSize$_validat.convertions;
+	    var conversions = _ABGroupSize$_validat.conversions;
 	    var ratio = _ABGroupSize$_validat.ratio;
 
 
 	    alpha = alpha / 100;
 	    beta = beta / 100;
-	    convertions = [convertions[0] / 100, convertions[1] / 100];
+	    conversions = [conversions[0] / 100, conversions[1] / 100];
 
-	    var delta = Math.abs(convertions[0] - convertions[1]);
-	    var q1 = 1 - convertions[0];
-	    var q2 = 1 - convertions[1];
-	    var pResult = (convertions[0] + ratio * convertions[1]) / (1 + ratio);
+	    var delta = Math.abs(conversions[0] - conversions[1]);
+	    var q1 = 1 - conversions[0];
+	    var q2 = 1 - conversions[1];
+	    var pResult = (conversions[0] + ratio * conversions[1]) / (1 + ratio);
 	    var qResult = 1 - pResult;
 	    var zValue1 = ABGroupSize._computeCriticalNormalZValue(1 - alpha / 2);
 	    var zValue2 = ABGroupSize._computeCriticalNormalZValue(1 - beta);
 
-	    var groupSize1 = Math.pow(zValue1 * Math.sqrt(pResult * qResult * (1 + 1 / ratio)) + zValue2 * Math.sqrt(convertions[0] * q1 + convertions[1] * q2 / ratio), 2) / Math.pow(delta, 2);
+	    var groupSize1 = Math.pow(zValue1 * Math.sqrt(pResult * qResult * (1 + 1 / ratio)) + zValue2 * Math.sqrt(conversions[0] * q1 + conversions[1] * q2 / ratio), 2) / Math.pow(delta, 2);
 	    var groupSize2 = ratio * groupSize1;
 
 	    return [parseInt(Math.round(groupSize1), 10), parseInt(Math.round(groupSize2), 10)];
@@ -191,13 +191,13 @@
 	    var alpha = _ref$alpha === undefined ? DEFAULT_ALPHA : _ref$alpha;
 	    var _ref$beta = _ref.beta;
 	    var beta = _ref$beta === undefined ? DEFAULT_BETA : _ref$beta;
-	    var convertions = _ref.convertions;
+	    var conversions = _ref.conversions;
 	    var _ref$ratio = _ref.ratio;
 	    var ratio = _ref$ratio === undefined ? DEFAULT_RATIO : _ref$ratio;
 
 	    alpha = parseFloat(alpha);
 	    beta = parseFloat(beta);
-	    convertions = [parseFloat(convertions[0]), parseFloat(convertions[1])];
+	    conversions = [parseFloat(conversions[0]), parseFloat(conversions[1])];
 	    ratio = parseFloat(ratio);
 
 	    if (alpha < 0 || alpha > 100) {
@@ -208,16 +208,16 @@
 	      console.warn('Beta must be from 0 to 100 percent. Beta set to default ' + DEFAULT_BETA + '.');
 	      beta = DEFAULT_BETA;
 	    }
-	    if (!convertions || convertions.length !== 2) {
+	    if (!conversions || conversions.length !== 2) {
 	      try {
-	        throw new Error('You must pass 2 convertions value, like [3, 3.2].');
+	        throw new Error('You must pass 2 conversions value, like [3, 3.2].');
 	      } catch (err) {
 	        return err;
 	      }
 	    }
 
 	    return {
-	      convertions: convertions,
+	      conversions: conversions,
 	      ratio: ratio,
 	      alpha: alpha,
 	      beta: beta
