@@ -19,16 +19,17 @@ let ABGroupSize = {
     n2 = sample size for group #2
   */
   getGroupSize: (data) => {
-    let {alpha, beta, conversions, ratio} = ABGroupSize._validateData(data);
+    console.log(data)
+    let {alpha, beta, convertionRate, ratio} = ABGroupSize._validateData(data);
 
     alpha = alpha / 100;
     beta = beta / 100;
-    conversions = [conversions[0] / 100, conversions[1] / 100];
+    convertionRate = [convertionRate[0] / 100, convertionRate[1] / 100];
 
-    let delta = Math.abs(conversions[0] - conversions[1]);
-    let q1 = 1 - conversions[0];
-    let q2 = 1 - conversions[1];
-    let pResult = (conversions[0] + ratio * conversions[1]) / (1 + ratio);
+    let delta = Math.abs(convertionRate[0] - convertionRate[1]);
+    let q1 = 1 - convertionRate[0];
+    let q2 = 1 - convertionRate[1];
+    let pResult = (convertionRate[0] + ratio * convertionRate[1]) / (1 + ratio);
     let qResult = 1 - pResult;
     let zValue1 = ABGroupSize._computeCriticalNormalZValue(1 - alpha / 2);
     let zValue2 = ABGroupSize._computeCriticalNormalZValue(1 - beta);
@@ -37,7 +38,7 @@ let ABGroupSize = {
       (zValue1 * Math.sqrt(
         pResult * qResult * (1 + 1 / ratio)
       ) + zValue2 * Math.sqrt(
-        conversions[0] * q1 + ((conversions[1] * q2) / ratio))
+        convertionRate[0] * q1 + ((convertionRate[1] * q2) / ratio))
       )
     , 2) / Math.pow(delta, 2);
     let groupSize2 = ratio * groupSize1;
@@ -48,10 +49,10 @@ let ABGroupSize = {
     ];
   },
 
-  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversions, ratio = DEFAULT_RATIO}) => {
+  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertionRate, ratio = DEFAULT_RATIO}) => {
     alpha = parseFloat(alpha)
     beta = parseFloat(beta)
-    conversions = [parseFloat(conversions[0]), parseFloat(conversions[1])]
+    convertionRate = [parseFloat(convertionRate[0]), parseFloat(convertionRate[1])]
     ratio = parseFloat(ratio)
 
     if (alpha < 0 || alpha > 100) {
@@ -62,23 +63,24 @@ let ABGroupSize = {
       console.warn(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
       beta = DEFAULT_BETA;
     }
-    if (!conversions || conversions.length !== 2) {
+    if (!convertionRate || convertionRate.length !== 2) {
       try {
-        throw new Error('You must pass 2 conversions value, like [3, 3.2].');
+        throw new Error('You must pass 2 convertionRate value, like [3, 3.2].');
       } catch (err) {
         return err;
       }
     }
 
     return {
-      conversions,
+      convertionRate,
       ratio,
       alpha,
       beta
     }
   },
 
-  convertionToConversionRate: (sizeOfGroup, conversion) => {
+  convertionToConvertionRate: (sizeOfGroup, conversion) => {
+    // if (!sizeOfGroup || !conversion || sizeOfGroup === 0) return 0;
     return (parseInt(conversion) / (parseInt(sizeOfGroup) / 100)).toFixed(CONVERSION_ACCURACY);
   },
 

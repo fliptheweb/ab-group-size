@@ -24,7 +24,9 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 ```
 
 # TODO
-- [ ] Save settings to cookies
-- [ ] Extract browser.js to index.js with all methods
-- [ ] Add tests
-- [ ] Rewrite cli version
+- [ ] Save settings to cookies;
+- [ ] Extract browser.js to index.js with all methods;
+- [ ] Settings from data attribute, object, etc;
+- [ ] Generate html inside;
+- [ ] Rewrite cli version;
+- [ ] Add tests;
