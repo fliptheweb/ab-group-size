@@ -5,8 +5,113 @@ const DEFAULT_ALPHA = 5;
 const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
 const CONVERSION_ACCURACY = 2;
+const RESULTS = {
+  WINNER_FIRST: 'First variant are winner.',
+  WINNER_SECOND: 'Second variant are winner.',
+  WINNER_EQUAL: 'Both variants are equal.',
+  NOT_ENOUGH: (strings) =>
+    `It\`s not enough traffic in groups, need ${strings}.`,
+  NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
+  NOT_MINIMUM_DELTA_CONVERSION: (deltaСonversion, currentDeltaConversion) =>
+    `Waiting for minimum delta between conversion (${deltaСonversion}). Current – ${currentDeltaConversion}. Now both variants are equal.`
+}
+
+let getTextOfResult = (resultCode, ...params) => {
+  if (!RESULTS[resultCode]) return;
+  if (typeof (RESULTS[resultCode]) === 'function') {
+    return RESULTS[resultCode](...params);
+  } else {
+    return RESULTS[resultCode];
+  }
+}
 
 let ABGroupSize = {
+  constructor: (params) => {
+    let data = ABGroupSize._validateParams(params);
+
+    if (data.errors) {
+      let errorsText = data.errors.reduce((result, error) => {
+        console.warn(error);
+        result += error + '\n';
+        return result;
+      }, '')
+      return new Error(errorsText);
+    }
+
+    let result = {
+      groupSizes: ABGroupSize.getGroupSize(data),
+      winner: false,
+      text: []
+    };
+
+    // Сравниваем с текущими размерами групп
+    // Сравниваем с дельтой если есть
+    if (!data.currentGroupSizes || data.currentGroupSizes.length !== 2) {
+      result.text.push(getTextOfResult('NO_CURRENT_GROUP'));
+    }
+
+    if (data.currentGroupSizes && data.currentGroupSizes.length === 2) {
+      let isEnoughData = false;
+
+      if (data.currentGroupSizes[0] >= result.groupSizes[0] && data.currentGroupSizes[1] >= result.groupSizes[1]) {
+        isEnoughData = true
+      }
+
+      // Определяем победителя
+      if (isEnoughData) {
+        if (data.convertion[0] > data.convertion[1]) {
+          result.winner = 1;
+          result.text.push(getTextOfResult('WINNER_FIRST'));
+        } else if (data.convertion[0] < data.convertion[1]) {
+          result.winner = 2;
+          result.text.push(getTextOfResult('WINNER_SECOND'));
+        } else {
+          result.winner = [1, 2];
+          result.text.push(getTextOfResult('WINNER_EQUAL'));
+        }
+      }
+
+      if (!isEnoughData) {
+        let missingAmount;
+        if (result.groupSizes[0] === result.groupSizes[1]) {
+          missingAmount = `${result.groupSizes[0] - data.currentGroupSizes[0]} more per both groups`;
+        } else {
+          missingAmount = `${result.groupSizes[0] - data.currentGroupSizes[0]} in first and ${result.groupSizes[0] - data.currentGroupSizes[0]} in second group`;
+        }
+        result.text.push(getTextOfResult('NOT_ENOUGH', missingAmount));
+      }
+
+      // Delta Conversions – насколько % различаются конверсии
+      let currentDeltaConversion = Math.abs(100 - (data.convertion[1] / (data.convertion[0] / 100)));
+      // Если текущая разница конверсий меньше, чем нужно, то победителя нет
+      if (data.deltaСonversion && data.deltaСonversion > currentDeltaConversion) {
+        // result.deltaGroupSizes = ABGroupSize(Object.assign(
+        //   {},
+        //   data,
+        //   {
+        //     convertionRate: [
+        //       ABGroupSize().convertionToConvertionRate(params.currentGroupSizes[0], data.convertion[0]),
+        //       ABGroupSize().convertionToConvertionRate(params.currentGroupSizes[1], data.convertion[0] + (data.convertion[0] / 100 * data.deltaСonversion))
+        //     ]
+        //   }
+        // ));
+        result.winner = false;
+        result.text.push(getTextOfResult('NOT_MINIMUM_DELTA_CONVERSION', data.deltaСonversion, currentDeltaConversion));
+
+        // if (data.currentGroupSizes[0] >= result.deltaGroupSizes[0] && data.currentGroupSizes[1] >= result.deltaGroupSizes[1]) {
+        //   result.text = 'It`s enough traffic for your delta convertion';
+        //   result.type = 'ENOUGH_TRAFFIC_DELTA';
+        // }
+      }
+    }
+
+    return Object.assign(
+      {},
+      data,
+      result
+    )
+  },
+
   /*
     Calculation formula from http://clincalc.com/Stats/SampleSize.aspx
     conversion1 (p1), conversion2 (p2) = proportion (incidence) of groups #1 and #2
@@ -19,9 +124,7 @@ let ABGroupSize = {
     n2 = sample size for group #2
   */
   getGroupSize: (data) => {
-    console.log(data)
-    let {alpha, beta, convertionRate, ratio} = ABGroupSize._validateData(data);
-
+    let {alpha, beta, convertionRate, ratio} = ABGroupSize._validateParams(data);
     alpha = alpha / 100;
     beta = beta / 100;
     convertionRate = [convertionRate[0] / 100, convertionRate[1] / 100];
@@ -49,39 +152,75 @@ let ABGroupSize = {
     ];
   },
 
-  _validateData: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertionRate, ratio = DEFAULT_RATIO}) => {
-    alpha = parseFloat(alpha)
-    beta = parseFloat(beta)
-    convertionRate = [parseFloat(convertionRate[0]), parseFloat(convertionRate[1])]
-    ratio = parseFloat(ratio)
+  _convertionToConvertionRate: (sizeOfGroup, conversion) => {
+    return (parseInt(conversion) / (parseInt(sizeOfGroup) / 100)).toFixed(CONVERSION_ACCURACY);
+  },
 
-    if (alpha < 0 || alpha > 100) {
-      console.warn(`Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`);
+  _validateParams: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, convertion, currentGroupSizes, ratio = DEFAULT_RATIO}) => {
+    let result = {};
+    let errors = [];
+    let isCurrentGroupSizesValid =
+      currentGroupSizes.length === 2 && currentGroupSizes[0] !== '' && currentGroupSizes[1] !== '' && !isNaN(currentGroupSizes[0]) && !isNaN(currentGroupSizes[1]);
+    let isConvertionValid =
+      convertion.length === 2 && convertion[0] !== '' && convertion[1] !== '' && !isNaN(convertion[0]) && !isNaN(convertion[1]);
+    alpha = parseFloat(alpha);
+    beta = parseFloat(beta);
+    ratio = parseFloat(ratio);
+
+    if (isConvertionValid) {
+      convertion = [parseFloat(convertion[0]), parseFloat(convertion[1])];
+    } else {
+      if (convertion.length !== 2) {
+        errors.push('You must pass 2 convertion value, like [3, 3.2].')
+      }
+      errors.push('You must pass valid convertion values.')
+    }
+    if (currentGroupSizes) {
+      if (isCurrentGroupSizesValid) {
+        currentGroupSizes = [parseInt(currentGroupSizes[0]), parseInt(currentGroupSizes[1])];
+      } else {
+        errors.push('You must pass 2 currentGroupSizes.')
+      }
+    } else {
+      errors.push('You must pass currentGroupSizes.')
+    }
+    if (alpha < 0 || alpha > 100 || isNaN(alpha)) {
+      errors.push(`Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`);
       alpha = DEFAULT_ALPHA;
     }
-    if (beta < 0 || beta > 100) {
-      console.warn(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
+    if (beta < 0 || beta > 100 || isNaN(beta)) {
+      errors.push(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
       beta = DEFAULT_BETA;
     }
-    if (!convertionRate || convertionRate.length !== 2) {
-      try {
-        throw new Error('You must pass 2 convertionRate value, like [3, 3.2].');
-      } catch (err) {
-        return err;
-      }
+    if (isNaN(ratio) && ratio !== 2) {
+      errors.push('Ratio temporarily must be only 2.');
+      ratio = DEFAULT_RATIO;
     }
 
-    return {
-      convertionRate,
+    result = {
+      convertion,
+      currentGroupSizes,
       ratio,
       alpha,
       beta
     }
-  },
 
-  convertionToConvertionRate: (sizeOfGroup, conversion) => {
-    // if (!sizeOfGroup || !conversion || sizeOfGroup === 0) return 0;
-    return (parseInt(conversion) / (parseInt(sizeOfGroup) / 100)).toFixed(CONVERSION_ACCURACY);
+    if (isConvertionValid && isCurrentGroupSizesValid) {
+      if (convertion[0] >= currentGroupSizes[0] || convertion[1] >= currentGroupSizes[1]) {
+        errors.push('Convertion can`t be more than group size');
+      }
+
+      result.convertionRate = [
+        parseFloat(ABGroupSize._convertionToConvertionRate(currentGroupSizes[0], convertion[0])),
+        parseFloat(ABGroupSize._convertionToConvertionRate(currentGroupSizes[1], convertion[1]))
+      ]
+    }
+
+    if (errors.length) {
+      result.errors = errors;
+    }
+
+    return result;
   },
 
   // @todo in future get implementation from http://jstat.github.io/test.html ?
@@ -165,7 +304,7 @@ let ABGroupSize = {
 
 module.exports = (data) => {
   if (data) {
-    return ABGroupSize.getGroupSize(data);
+    return ABGroupSize.constructor(data);
   } else {
     return ABGroupSize;
   }

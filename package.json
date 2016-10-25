@@ -11,7 +11,7 @@
     "test": "ava ./test/",
     "build": "webpack",
     "watch": "webpack --color --watch",
-    "dev-server": "webpack-dev-server --inline --port 8888 --open --content-base dist/"
+    "start": "webpack-dev-server --inline --port 8888 --open --content-base dist/"
   },
   "keywords": [
     "ab",
