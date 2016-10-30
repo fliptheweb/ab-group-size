@@ -52,7 +52,7 @@
 	  alpha: 5, // optional
 	  beta: 20, // optional
 	  conversions: [1.2, 1.4],
-	  currentGroupSizes: [], // optional
+	  currentGroupSize: [], // optional
 	  deltaconversion: '' // optional
 	  // maxTrafficPerGroup: 10000
 	};
@@ -61,7 +61,7 @@
 	  var alpha = _ref.alpha;
 	  var beta = _ref.beta;
 	  var conversions = _ref.conversions;
-	  var currentGroupSizes = _ref.currentGroupSizes;
+	  var currentGroupSize = _ref.currentGroupSize;
 	  var deltaconversion = _ref.deltaconversion;
 
 	  if (!conversions || conversions.length !== 2) {
@@ -76,7 +76,7 @@
 	    alpha: parseFloat(alpha),
 	    beta: parseFloat(beta),
 	    conversions: [parseFloat(conversions[0]), parseFloat(conversions[1])],
-	    currentGroupSizes: [parseFloat(currentGroupSizes[0]), parseFloat(currentGroupSizes[1])],
+	    currentGroupSize: [parseFloat(currentGroupSize[0]), parseFloat(currentGroupSize[1])],
 	    deltaconversion: parseFloat(deltaconversion)
 	  };
 	};
@@ -87,24 +87,24 @@
 	  var result = {};
 
 	  // validate data
-	  result.groupSizes = ABGroupSize(data);
+	  result.groupSize = ABGroupSize(data);
 
 	  if (data.deltaconversion) {
-	    result.deltaGroupSizes = ABGroupSize(Object.assign({}, data, {
+	    result.deltagroupSize = ABGroupSize(Object.assign({}, data, {
 	      conversions: [data.conversions[0], data.conversions[0] + data.conversions[0] / 100 * data.deltaconversion]
 	    }));
 	  }
 
 	  // Сравниваем с текущими размерами групп
 	  // Сравниваем с дельтой если есть
-	  if (data.currentGroupSizes && data.currentGroupSizes.length === 2) {
+	  if (data.currentGroupSize && data.currentGroupSize.length === 2) {
 	    var isEnoughData = false;
 
-	    if (data.currentGroupSizes[0] >= result.groupSizes[0] && data.currentGroupSizes[1] >= result.groupSizes[1]) {
+	    if (data.currentGroupSize[0] >= result.groupSize[0] && data.currentGroupSize[1] >= result.groupSize[1]) {
 	      isEnoughData = true;
 	    }
 
-	    // if (data.currentGroupSizes[0] >= result.deltaGroupSizes[0] && data.currentGroupSizes[1] >= result.deltaGroupSizes[1]) {
+	    // if (data.currentGroupSize[0] >= result.deltagroupSize[0] && data.currentGroupSize[1] >= result.deltagroupSize[1]) {
 	    //   result.text = 'It`s enough traffic for your delta conversions';
 	    //   result.type = 'ENOUGH_TRAFFIC_DELTA';
 	    // }
@@ -122,10 +122,10 @@
 
 	    if (!isEnoughData) {
 	      var missingAmount = '';
-	      if (result.groupSizes[0] === result.groupSizes[1]) {
-	        missingAmount = result.groupSizes[0] - data.currentGroupSizes[0] + ' more in both groups';
+	      if (result.groupSize[0] === result.groupSize[1]) {
+	        missingAmount = result.groupSize[0] - data.currentGroupSize[0] + ' more in both groups';
 	      } else {
-	        missingAmount = result.groupSizes[0] - data.currentGroupSizes[0] + ' in first and ' + (result.groupSizes[0] - data.currentGroupSizes[0]) + ' in second group';
+	        missingAmount = result.groupSize[0] - data.currentGroupSize[0] + ' in first and ' + (result.groupSize[0] - data.currentGroupSize[0]) + ' in second group';
 	      }
 	      result.text = 'It`s not enough traffic in groups, need ' + missingAmount + '.';
 	    }

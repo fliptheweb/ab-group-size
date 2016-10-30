@@ -6,6 +6,8 @@ Installation:
 npm install --save ab-group-size
 ```
 
+Library have the browser, node.js and cli versions:
+
 Usage:
 ```js
 let ABGroupSize = require('ab-group-size');
@@ -13,7 +15,7 @@ let ABGroupSize = require('ab-group-size');
 ABGroupSize({
   alpha: 5,                // in percent, default = 5
   beta: 20,                // in percent, default = 20
-  conversions: [3.0, 3.2], // in percent, per group, only 2 groups now
+  conversion: [3.0, 3.2],  // in percent, per group, only 2 groups now
   ratio: 1                 // ratio of group sizes, default = 1
 })
 ```
@@ -24,9 +26,11 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 ```
 
 # TODO
+- [ ] Do nice design;
 - [ ] Save settings to cookies;
 - [x] Extract browser.js to index.js with all methods;
-- [ ] Settings from data attribute, object, etc;
+- [x] Settings from data attribute;
+- [ ] Extract errors to const;
 - [ ] Generate html inside;
 - [ ] Rewrite cli version;
 - [ ] Add tests;

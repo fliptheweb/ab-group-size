@@ -5,66 +5,77 @@ const DEFAULT_ALPHA = 5;
 const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
 const CONVERSION_ACCURACY = 2;
-const RESULTS = {
+const MESSAGE = {
   WINNER_FIRST: 'First variant are winner.',
   WINNER_SECOND: 'Second variant are winner.',
   WINNER_EQUAL: 'Both variants are equal.',
-  NOT_ENOUGH: (groupSizes, currentGroupSizes) => {
+  NOT_ENOUGH: (groupSize, currentGroupSize, deltaConversion) => {
     let missingAmount = '';
-    if (groupSizes[0] === groupSizes[1]) {
-      missingAmount = `${groupSizes[0] - currentGroupSizes[0]} more per both groups`;
+    if (groupSize[0] === groupSize[1]) {
+      missingAmount = `${groupSize[0] - currentGroupSize[0]} more per both groups`;
     } else {
-      missingAmount = `${groupSizes[0] - currentGroupSizes[0]} in first and ${groupSizes[0] - currentGroupSizes[0]} in second group`;
+      missingAmount = `${groupSize[0] - currentGroupSize[0]} in first and ${groupSize[0] - currentGroupSize[0]} in second group`;
     }
-    return `It\`s not enough traffic in groups, need ${missingAmount}.`;
+    return `It\`s not enough traffic in groups, need ${missingAmount}. Current delta conversion ${deltaConversion.toFixed(CONVERSION_ACCURACY)}`;
   },
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
-  NOT_MINIMUM_DELTA_CONVERSION: (deltaСonversion, currentDeltaconversion) =>
-    `Waiting for minimum delta between conversion (${deltaСonversion}). Current – ${currentDeltaconversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`
+  NOT_MINIMUM_DELTA_CONVERSION: (deltaConversion, currentDeltaconversion) =>
+    `Enough group size in both groups. But waiting for minimum delta between conversion (${deltaConversion}). Current – ${currentDeltaconversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`,
+  ERROR_CONVERSIONS_LENGTH: 'You must pass 2 conversion value, like [3, 3.2].',
+  ERROR_CONVERSIONS_VALID: 'You must pass valid conversion values.',
+  ERROR_GROUP_SIZE: '',
+  ERROR_GROUP_SIZE_VALID: 'You must pass currentGroupSize.',
+  ERROR_ALPHA: `Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`,
+  ERROR_BETA: `Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`,
+  ERROR_RATIO: `Ratio temporarily must be only ${DEFAULT_RATIO}.`,
+  ERROR_CONVERSION_MORE_THAN_GROUP: 'Conversion can`t be more than group size'
 }
 // const INIT_PARAMS = {
 //   alpha: 5,
 //   beta: 20,
 //   ratio: 1,
-//   deltaСonversion: 5
+//   deltaConversion: 5
 // }
 
-var ABCalculator = class {
-  constructor (params) {
+// var ABCalculator = class {
+//   constructor (params) {
+//
+//   }
+//
+//   static groupSize({alpha, beta, conversionRate, ratio}) => {
+//
+//   }
+//
+//   static normalizeParams() => {
+//
+//   }
+//
+//   static _conversionToConversionRate() => {
+//
+//   }
+//
+//   static _computeCriticalNormalZValue() => {
+//
+//   }
+//
+//   static _probabilityOfNormalZValue() => {
+//
+//   }
+//
+//   static _getTextOfResult() => {
+//
+//   }
+// }
 
+let getMessage = (messageCode, ...params) => {
+  if (!MESSAGE[messageCode]) {
+    console.warn(`Message '${messageCode}' doesn't exist`);
+    return;
   }
-
-  static groupSize({alpha, beta, conversionRate, ratio}) => {
-
-  }
-
-  static normalizeParams() => {
-
-  }
-
-  static _conversionToConversionRate() => {
-
-  }
-
-  static _computeCriticalNormalZValue() => {
-
-  }
-
-  static _probabilityOfNormalZValue() => {
-
-  }
-
-  static _getTextOfResult() => {
-
-  }
-}
-
-let getTextOfResult = (resultCode, ...params) => {
-  if (!RESULTS[resultCode]) return;
-  if (typeof (RESULTS[resultCode]) === 'function') {
-    return RESULTS[resultCode](...params);
+  if (typeof (MESSAGE[messageCode]) === 'function') {
+    return MESSAGE[messageCode](...params);
   } else {
-    return RESULTS[resultCode];
+    return MESSAGE[messageCode];
   }
 }
 
@@ -85,45 +96,40 @@ let ABGroupSize = {
       text: []
     };
 
-    if (data.conversion[0] !== data.conversion[1]) {
-      result.groupSizes = ABGroupSize.getGroupSize(data);
+    if (data.conversionRate[0] !== data.conversionRate[1]) {
+      result.groupSize = ABGroupSize.getGroupSize(data);
     } else {
-      result.winner = false;
-      result.text.push(getTextOfResult('WINNER_EQUAL'));
+      result.text.push(getMessage('WINNER_EQUAL'));
     }
 
     // Сравниваем с текущими размерами групп
-    if (data.currentGroupSizes && data.currentGroupSizes.length === 2 && result.groupSizes) {
+    if (data.currentGroupSize && data.currentGroupSize.length === 2 && result.groupSize) {
+      result.currentDeltaConversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));
+      let isEnoughDeltaConversion = !(data.deltaConversion && data.deltaConversion > result.currentDeltaConversion);
       let isEnoughData = false;
 
-      if (data.currentGroupSizes[0] >= result.groupSizes[0] && data.currentGroupSizes[1] >= result.groupSizes[1]) {
+      if (data.currentGroupSize[0] >= result.groupSize[0] && data.currentGroupSize[1] >= result.groupSize[1]) {
         isEnoughData = true
       }
 
-      // Определяем победителя
-      if (isEnoughData) {
+      if (isEnoughData && isEnoughDeltaConversion) {
         if (data.conversion[0] > data.conversion[1]) {
           result.winner = 1;
-          result.text.push(getTextOfResult('WINNER_FIRST'));
+          result.text.push(getMessage('WINNER_FIRST'));
         } else if (data.conversion[0] < data.conversion[1]) {
           result.winner = 2;
-          result.text.push(getTextOfResult('WINNER_SECOND'));
+          result.text.push(getMessage('WINNER_SECOND'));
         } else {
           result.winner = false;
-          result.text.push(getTextOfResult('WINNER_EQUAL'));
+          result.text.push(getMessage('WINNER_EQUAL'));
         }
-      }
-
-      if (!isEnoughData) {
-        result.text.push(getTextOfResult('NOT_ENOUGH', result.groupSizes, data.currentGroupSizes));
-      }
-
-      // Delta conversions – насколько % различаются конверсии
-      let currentDeltaconversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));
-      // Если текущая разница конверсий меньше, чем нужно, то победителя нет
-      if (data.deltaСonversion && data.deltaСonversion > currentDeltaconversion && isEnoughData) {
+      } else if (isEnoughData && !isEnoughDeltaConversion) {
         result.winner = false;
-        result.text.push(getTextOfResult('NOT_MINIMUM_DELTA_CONVERSION', data.deltaСonversion, currentDeltaconversion));
+        // TODO: enough data is reached
+        result.text.push(getMessage('NOT_MINIMUM_DELTA_CONVERSION', data.deltaConversion, result.currentDeltaConversion));
+      } else {
+        // FIXME: if its not enoug only in one branch, say about it
+        result.text.push(getMessage('NOT_ENOUGH', result.groupSize, data.currentGroupSize, result.currentDeltaConversion));
       }
     }
 
@@ -146,6 +152,10 @@ let ABGroupSize = {
     n2 = sample size for group #2
   */
   getGroupSize: ({alpha, beta, conversionRate, ratio}) => {
+    if (conversionRate[0] === conversionRate[1]) {
+      return [Infinity, Infinity];
+    }
+
     alpha = alpha / 100;
     beta = beta / 100;
     conversionRate = [conversionRate[0] / 100, conversionRate[1] / 100];
@@ -178,68 +188,68 @@ let ABGroupSize = {
   },
 
   // normalize params
-  _validateParams: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversion, currentGroupSizes, ratio = DEFAULT_RATIO, deltaСonversion}) => {
+  _validateParams: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversion, currentGroupSize, ratio = DEFAULT_RATIO, deltaConversion}) => {
     let result = {};
     let errors = [];
-    let isCurrentGroupSizesValid =
-      currentGroupSizes.length === 2 && currentGroupSizes[0] !== '' && currentGroupSizes[1] !== '' && !isNaN(currentGroupSizes[0]) && !isNaN(currentGroupSizes[1]);
-    let isconversionValid =
+    let iscurrentGroupSizeValid =
+      currentGroupSize.length === 2 && currentGroupSize[0] !== '' && currentGroupSize[1] !== '' && !isNaN(currentGroupSize[0]) && !isNaN(currentGroupSize[1]);
+    let isConversionValid =
       conversion.length === 2 && conversion[0] !== '' && conversion[1] !== '' && !isNaN(conversion[0]) && !isNaN(conversion[1]);
     alpha = parseFloat(alpha);
     beta = parseFloat(beta);
     ratio = parseFloat(ratio);
 
-    if (isconversionValid) {
+    if (isConversionValid) {
       conversion = [parseFloat(conversion[0]), parseFloat(conversion[1])];
     } else {
       if (conversion.length !== 2) {
-        errors.push('You must pass 2 conversion value, like [3, 3.2].')
+        errors.push(getMessage('ERROR_CONVERSIONS_LENGTH'))
       }
-      errors.push('You must pass valid conversion values.')
+      errors.push(getMessage('ERROR_CONVERSIONS_VALID'))
     }
-    if (currentGroupSizes) {
-      if (isCurrentGroupSizesValid) {
-        currentGroupSizes = [parseInt(currentGroupSizes[0]), parseInt(currentGroupSizes[1])];
+    if (currentGroupSize) {
+      if (iscurrentGroupSizeValid) {
+        currentGroupSize = [parseInt(currentGroupSize[0]), parseInt(currentGroupSize[1])];
       } else {
-        errors.push('You must pass 2 currentGroupSizes.')
+        errors.push(getMessage('ERROR_GROUP_SIZE'))
       }
     } else {
-      errors.push('You must pass currentGroupSizes.')
+      errors.push(getMessage('ERROR_GROUP_SIZE_VALID'))
     }
     if (alpha < 0 || alpha > 100 || isNaN(alpha)) {
-      errors.push(`Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`);
+      errors.push(getMessage('ERROR_ALPHA'));
       alpha = DEFAULT_ALPHA;
     }
     if (beta < 0 || beta > 100 || isNaN(beta)) {
-      errors.push(`Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`);
+      errors.push(getMessage('ERROR_BETA'));
       beta = DEFAULT_BETA;
     }
     if (isNaN(ratio) && ratio !== DEFAULT_RATIO) {
-      errors.push(`Ratio temporarily must be only ${DEFAULT_RATIO}.`);
+      errors.push(getMessage('ERROR_RATIO'));
       ratio = DEFAULT_RATIO;
     }
 
     result = {
       conversion,
-      currentGroupSizes,
+      currentGroupSize,
       ratio,
       alpha,
       beta
     }
 
-    if (isconversionValid && isCurrentGroupSizesValid) {
-      if (conversion[0] >= currentGroupSizes[0] || conversion[1] >= currentGroupSizes[1]) {
-        errors.push('conversion can`t be more than group size');
+    if (isConversionValid && iscurrentGroupSizeValid) {
+      if (conversion[0] >= currentGroupSize[0] || conversion[1] >= currentGroupSize[1]) {
+        errors.push(getMessage('ERROR_CONVERSION_MORE_THAN_GROUP'));
       }
 
       result.conversionRate = [
-        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSizes[0], conversion[0])),
-        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSizes[1], conversion[1]))
+        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSize[0], conversion[0])),
+        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSize[1], conversion[1]))
       ]
     }
 
-    if (deltaСonversion && !isNaN(deltaСonversion)) {
-      result.deltaСonversion = parseFloat(deltaСonversion);
+    if (deltaConversion && !isNaN(deltaConversion)) {
+      result.deltaConversion = parseFloat(deltaConversion);
     }
 
     if (errors.length) {
