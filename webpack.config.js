@@ -9,6 +9,19 @@ module.exports = {
       test: /\.js$/,
       exclude: /node_modules/,
       loader: 'babel'
+    }, {
+      test: /\.css$/,
+      loaders: [
+        'style-loader',
+        'css-loader?importLoaders=1',
+        'postcss-loader'
+      ]
     }]
+  },
+  postcss: function () {
+    return [
+      require('precss')(),
+      require('autoprefixer')()
+    ];
   }
 };

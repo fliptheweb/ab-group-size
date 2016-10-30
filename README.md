@@ -2,11 +2,19 @@
 Simple calculator for computing group size of A/B tests.
 
 Installation:
+
+Library have browser, node.js and cli versions.
+
+## Browser
+You can pass settings by:
+1. Data-attributes;
+2. ABGroupSize initializer;
+3. Fill the settings fields.
+
+## Node.js
 ```sh
 npm install --save ab-group-size
 ```
-
-Library have the browser, node.js and cli versions:
 
 Usage:
 ```js
@@ -15,12 +23,12 @@ let ABGroupSize = require('ab-group-size');
 ABGroupSize({
   alpha: 5,                // in percent, default = 5
   beta: 20,                // in percent, default = 20
-  conversion: [3.0, 3.2],  // in percent, per group, only 2 groups now
-  ratio: 1                 // ratio of group sizes, default = 1
+  groupSize: [2000, 2000],
+  conversion: [1000, 900]
 })
 ```
 
-CLI version:
+## CLI
 ```sh
 ab-group-size --alpha 5 --beta 20 "3, 3.2"
 ```

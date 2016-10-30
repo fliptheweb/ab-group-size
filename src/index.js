@@ -23,7 +23,7 @@ const MESSAGES = {
     `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}). Current – ${deltaConversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`,
   ERROR_CONVERSIONS_LENGTH: 'You must pass 2 conversion value, like [3, 3.2].',
   ERROR_CONVERSIONS_VALID: 'You must pass valid conversion values.',
-  ERROR_GROUP_SIZE: '',
+  ERROR_GROUP_SIZE: 'You must pass 2 group size value, like [1000, 1000].',
   ERROR_GROUP_SIZE_VALID: 'You must pass currentGroupSize.',
   ERROR_ALPHA: `Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`,
   ERROR_BETA: `Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`,
@@ -97,7 +97,6 @@ let ABGroupSize = {
     };
 
     result.neededGroupSize = ABGroupSize.getNeededGroupSize(data);
-    console.log(result.neededGroupSize)
 
     if (data.groupSize && data.groupSize.length === 2 && result.neededGroupSize) {
       result.deltaConversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));

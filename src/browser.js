@@ -1,5 +1,5 @@
 'use strict'
-
+require('./styles.css');
 let ABGroupSize = require('../src/index');
 let initiated = false;
 let defaultData = {
@@ -54,19 +54,30 @@ let getSettingsFromAttrubutes = () => {
 }
 
 let getSettingsFromFields = () => {
-  return {
-    alpha: alphaField.value,
-    beta: betaField.value,
-    groupSize: [
+  let result = {}
+  if (alphaField.value !== '') {
+    result.alpha = alphaField.value;
+  }
+  if (betaField.value !== '') {
+    result.beta = betaField.value;
+  }
+  if (aGroupSizeField.value !== '' && bGroupSizeField.value !== '') {
+    result.groupSize = [
       aGroupSizeField.value,
       bGroupSizeField.value
-    ],
-    conversion: [
+    ];
+  }
+  if (aConversionField.value !== '' && bConversionField.value !== '') {
+    result.conversion = [
       aConversionField.value,
       bConversionField.value
-    ],
-    neededDeltaConversion: neededDeltaConversionField.value
+    ];
   }
+  if (neededDeltaConversionField.value !== '') {
+    result.neededDeltaConversion = neededDeltaConversionField.value;
+  }
+
+  return result;
 }
 
 let fillFieldFromSettings = ({alpha, beta, groupSize, conversion, neededDeltaConversion}) => {
@@ -83,18 +94,24 @@ let fillFieldFromSettings = ({alpha, beta, groupSize, conversion, neededDeltaCon
   }
 }
 
-let renderCalculator = () => {
+let renderCalculator = (settingFromParams) => {
+  let data = {}
   if (!initiated) {
-    fillFieldFromSettings(getSettingsFromAttrubutes())
     initiated = true;
+    data = Object.assign(
+      {},
+      defaultData,
+      getSettingsFromAttrubutes()
+    );
+    fillFieldFromSettings(data);
+  } else {
+    data = getSettingsFromFields();
   }
-  let data = Object.assign(
-    {},
-    defaultData,
-    getSettingsFromFields()
-  )
+  if (!data.conversion || !data.groupSize) {
+    console.log('You must pass conversion and groups size to ABGroupSize plugin')
+    return;
+  }
   data = ABGroupSize(data);
-  console.log(data);
 
   if (!(data instanceof Error)) {
     if (data.conversionRate) {
