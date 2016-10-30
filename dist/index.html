@@ -28,11 +28,11 @@
 </style>
 
 <div class="ab-calculator"
-  data-abcalculator-current-group-size="[10000,10000]"
+  data-abcalculator-group-size="[10000,10000]"
   data-abcalculator-conversion="[5000, 5100]"
   data-abcalculator-alpha="5"
   data-abcalculator-beta="20"
-  data-abcalculator-delta-conversion="5">
+  data-abcalculator-needed-delta-conversion="5">
   <table>
     <thead>
       <tr>
@@ -45,8 +45,8 @@
     <tbody>
       <tr>
         <td><strong>A</strong></td>
-        <td><input id="a-group-size" type="number" min="0" step="1" value="10000"/></td>
-        <td><input id="a-conversion" type="number" min="0" step="1" value="5000"/></td>
+        <td><input id="a-group-size" type="number" min="0" step="1"/></td>
+        <td><input id="a-conversion" type="number" min="0" step="1"/></td>
         <td id="a-conversion-rate"></td>
       </tr>
       <tr>
@@ -57,8 +57,8 @@
       </tr>
       <tr>
         <td><strong>B</strong></td>
-        <td><input id="b-group-size" type="number" min="0" step="1" value="10000"/></td>
-        <td><input id="b-conversion" type="number" min="0" step="1"/ value="5100"></td>
+        <td><input id="b-group-size" type="number" min="0" step="1"/></td>
+        <td><input id="b-conversion" type="number" min="0" step="1"/></td>
         <td id="b-conversion-rate"></td>
       </tr>
     </tbody>
@@ -66,9 +66,9 @@
   <div class="ab-calculator__result-message"></div>
   <div class="ab-calculator__settings">
     <h4>Settings:</h4>
-    <p>Alpha (I-type error): <input id="alpha" type="number" min="0" max="100" step="1" value="5" /></p>
-    <p>Beta (II-type error): <input id="beta" type="number" min="0" max="100" step="1" value="20" /></p>
-    <p>Minimum delta conversion<sup>*</sup>(winner conversion?)<input id="delta-conversion" type="number" min="0" max="100" step="1" value="5"/></p>
+    <p>Alpha (I-type error): <input id="alpha" type="number" min="0" max="100" step="1"/></p>
+    <p>Beta (II-type error): <input id="beta" type="number" min="0" max="100" step="1"/></p>
+    <p>Minimum delta conversion<sup>*</sup><input id="needed-delta-conversion" type="number" min="0" max="100" step="1"/></p>
   </div>
 </div>
 

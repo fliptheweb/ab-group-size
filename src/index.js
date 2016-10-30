@@ -5,22 +5,22 @@ const DEFAULT_ALPHA = 5;
 const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
 const CONVERSION_ACCURACY = 2;
-const MESSAGE = {
+const MESSAGES = {
   WINNER_FIRST: 'First variant are winner.',
   WINNER_SECOND: 'Second variant are winner.',
   WINNER_EQUAL: 'Both variants are equal.',
-  NOT_ENOUGH: (groupSize, currentGroupSize, deltaConversion) => {
+  NOT_ENOUGH: (neededGroupSize, groupSize, deltaConversion) => {
     let missingAmount = '';
     if (groupSize[0] === groupSize[1]) {
-      missingAmount = `${groupSize[0] - currentGroupSize[0]} more per both groups`;
+      missingAmount = `${neededGroupSize[0] - groupSize[0]} more per both groups`;
     } else {
-      missingAmount = `${groupSize[0] - currentGroupSize[0]} in first and ${groupSize[0] - currentGroupSize[0]} in second group`;
+      missingAmount = `${neededGroupSize[0] - groupSize[0]} in first and ${neededGroupSize[1] - groupSize[1]} in second group`;
     }
-    return `It\`s not enough traffic in groups, need ${missingAmount}. Current delta conversion ${deltaConversion.toFixed(CONVERSION_ACCURACY)}`;
+    return `It\`s not enough traffic in groups, need ${missingAmount}. Current delta conversion ${deltaConversion.toFixed(CONVERSION_ACCURACY)}.`;
   },
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
-  NOT_MINIMUM_DELTA_CONVERSION: (deltaConversion, currentDeltaconversion) =>
-    `Enough group size in both groups. But waiting for minimum delta between conversion (${deltaConversion}). Current – ${currentDeltaconversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`,
+  NOT_MINIMUM_DELTA_CONVERSION: (neededDeltaConversion, deltaConversion) =>
+    `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}). Current – ${deltaConversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`,
   ERROR_CONVERSIONS_LENGTH: 'You must pass 2 conversion value, like [3, 3.2].',
   ERROR_CONVERSIONS_VALID: 'You must pass valid conversion values.',
   ERROR_GROUP_SIZE: '',
@@ -28,7 +28,7 @@ const MESSAGE = {
   ERROR_ALPHA: `Alpha must be from 0 to 100 percent. Alpha set to defaul ${DEFAULT_ALPHA}.`,
   ERROR_BETA: `Beta must be from 0 to 100 percent. Beta set to default ${DEFAULT_BETA}.`,
   ERROR_RATIO: `Ratio temporarily must be only ${DEFAULT_RATIO}.`,
-  ERROR_CONVERSION_MORE_THAN_GROUP: 'Conversion can`t be more than group size'
+  ERROR_CONVERSION_MORE_THAN_GROUP: 'Conversion can`t be more than group size.'
 }
 // const INIT_PARAMS = {
 //   alpha: 5,
@@ -68,14 +68,14 @@ const MESSAGE = {
 // }
 
 let getMessage = (messageCode, ...params) => {
-  if (!MESSAGE[messageCode]) {
+  if (!MESSAGES[messageCode]) {
     console.warn(`Message '${messageCode}' doesn't exist`);
     return;
   }
-  if (typeof (MESSAGE[messageCode]) === 'function') {
-    return MESSAGE[messageCode](...params);
+  if (typeof (MESSAGES[messageCode]) === 'function') {
+    return MESSAGES[messageCode](...params);
   } else {
-    return MESSAGE[messageCode];
+    return MESSAGES[messageCode];
   }
 }
 
@@ -96,19 +96,16 @@ let ABGroupSize = {
       text: []
     };
 
-    if (data.conversionRate[0] !== data.conversionRate[1]) {
-      result.groupSize = ABGroupSize.getGroupSize(data);
-    } else {
-      result.text.push(getMessage('WINNER_EQUAL'));
-    }
+    result.neededGroupSize = ABGroupSize.getNeededGroupSize(data);
+    console.log(result.neededGroupSize)
 
-    // Сравниваем с текущими размерами групп
-    if (data.currentGroupSize && data.currentGroupSize.length === 2 && result.groupSize) {
-      result.currentDeltaConversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));
-      let isEnoughDeltaConversion = !(data.deltaConversion && data.deltaConversion > result.currentDeltaConversion);
+    if (data.groupSize && data.groupSize.length === 2 && result.neededGroupSize) {
+      result.deltaConversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));
+      let isEnoughDeltaConversion = !(data.neededDeltaConversion && data.neededDeltaConversion > result.deltaConversion);
       let isEnoughData = false;
+      let isNeededGroupSizeInfitity = result.neededGroupSize[0] === Infinity;
 
-      if (data.currentGroupSize[0] >= result.groupSize[0] && data.currentGroupSize[1] >= result.groupSize[1]) {
+      if (data.groupSize[0] >= result.neededGroupSize[0] && data.groupSize[1] >= result.neededGroupSize[1]) {
         isEnoughData = true
       }
 
@@ -125,11 +122,12 @@ let ABGroupSize = {
         }
       } else if (isEnoughData && !isEnoughDeltaConversion) {
         result.winner = false;
-        // TODO: enough data is reached
-        result.text.push(getMessage('NOT_MINIMUM_DELTA_CONVERSION', data.deltaConversion, result.currentDeltaConversion));
+        result.text.push(getMessage('NOT_MINIMUM_DELTA_CONVERSION', data.neededDeltaConversion, result.deltaConversion));
+      } else if (isNeededGroupSizeInfitity) {
+        result.winner = false;
+        result.text.push(getMessage('WINNER_EQUAL'));
       } else {
-        // FIXME: if its not enoug only in one branch, say about it
-        result.text.push(getMessage('NOT_ENOUGH', result.groupSize, data.currentGroupSize, result.currentDeltaConversion));
+        result.text.push(getMessage('NOT_ENOUGH', result.neededGroupSize, data.groupSize, result.deltaConversion));
       }
     }
 
@@ -151,7 +149,7 @@ let ABGroupSize = {
     n1 = sample size for group #1
     n2 = sample size for group #2
   */
-  getGroupSize: ({alpha, beta, conversionRate, ratio}) => {
+  getNeededGroupSize: ({alpha, beta, conversionRate, ratio}) => {
     if (conversionRate[0] === conversionRate[1]) {
       return [Infinity, Infinity];
     }
@@ -188,11 +186,11 @@ let ABGroupSize = {
   },
 
   // normalize params
-  _validateParams: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversion, currentGroupSize, ratio = DEFAULT_RATIO, deltaConversion}) => {
+  _validateParams: ({alpha = DEFAULT_ALPHA, beta = DEFAULT_BETA, conversion, groupSize, ratio = DEFAULT_RATIO, neededDeltaConversion}) => {
     let result = {};
     let errors = [];
-    let iscurrentGroupSizeValid =
-      currentGroupSize.length === 2 && currentGroupSize[0] !== '' && currentGroupSize[1] !== '' && !isNaN(currentGroupSize[0]) && !isNaN(currentGroupSize[1]);
+    let isGroupSizeValid =
+      groupSize.length === 2 && groupSize[0] !== '' && groupSize[1] !== '' && !isNaN(groupSize[0]) && !isNaN(groupSize[1]);
     let isConversionValid =
       conversion.length === 2 && conversion[0] !== '' && conversion[1] !== '' && !isNaN(conversion[0]) && !isNaN(conversion[1]);
     alpha = parseFloat(alpha);
@@ -207,9 +205,9 @@ let ABGroupSize = {
       }
       errors.push(getMessage('ERROR_CONVERSIONS_VALID'))
     }
-    if (currentGroupSize) {
-      if (iscurrentGroupSizeValid) {
-        currentGroupSize = [parseInt(currentGroupSize[0]), parseInt(currentGroupSize[1])];
+    if (groupSize) {
+      if (isGroupSizeValid) {
+        groupSize = [parseInt(groupSize[0]), parseInt(groupSize[1])];
       } else {
         errors.push(getMessage('ERROR_GROUP_SIZE'))
       }
@@ -231,25 +229,25 @@ let ABGroupSize = {
 
     result = {
       conversion,
-      currentGroupSize,
+      groupSize,
       ratio,
       alpha,
       beta
     }
 
-    if (isConversionValid && iscurrentGroupSizeValid) {
-      if (conversion[0] >= currentGroupSize[0] || conversion[1] >= currentGroupSize[1]) {
+    if (isConversionValid && isGroupSizeValid) {
+      if (conversion[0] >= groupSize[0] || conversion[1] >= groupSize[1]) {
         errors.push(getMessage('ERROR_CONVERSION_MORE_THAN_GROUP'));
       }
 
       result.conversionRate = [
-        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSize[0], conversion[0])),
-        parseFloat(ABGroupSize._conversionToConversionRate(currentGroupSize[1], conversion[1]))
+        parseFloat(ABGroupSize._conversionToConversionRate(groupSize[0], conversion[0])),
+        parseFloat(ABGroupSize._conversionToConversionRate(groupSize[1], conversion[1]))
       ]
     }
 
-    if (deltaConversion && !isNaN(deltaConversion)) {
-      result.deltaConversion = parseFloat(deltaConversion);
+    if (neededDeltaConversion && !isNaN(neededDeltaConversion)) {
+      result.neededDeltaConversion = parseFloat(neededDeltaConversion);
     }
 
     if (errors.length) {
@@ -259,7 +257,7 @@ let ABGroupSize = {
     return result;
   },
 
-  // @todo in future get implementation from http://jstat.github.io/test.html ?
+  // @TODO: in future get implementation from http://jstat.github.io/test.html ?
   // Next Z-value compute formulas from http://sampson.byu.edu/courses/z2p2z-calculator.html
   /*  The following JavaScript functions for calculating normal and
       chi-square probabilities and critical values were adapted by

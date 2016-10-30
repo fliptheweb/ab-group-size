@@ -3,13 +3,9 @@
 let ABGroupSize = require('../src/index');
 let initiated = false;
 let defaultData = {
-  alpha: 5,  // optional
-  beta: 20,  // optional
-  conversion: [100, 100],
-  // conversionRates: [1.2, 1.4], // refactor
-  currentGroupSize: [],
-  deltaConversion: 5   // optional
-  // maxTrafficPerGroup: 10000
+  alpha: 5,
+  beta: 20,
+  deltaConversion: 5
 }
 
 //
@@ -26,7 +22,7 @@ let bConversionRateField = document.getElementById('b-conversion-rate');
 // Settings
 let alphaField = document.getElementById('alpha');
 let betaField = document.getElementById('beta');
-let deltaConversionField = document.getElementById('delta-conversion');
+let neededDeltaConversionField = document.getElementById('needed-delta-conversion');
 
 // Result
 let result = document.getElementById('result');
@@ -36,7 +32,7 @@ let getSettingsFromAttrubutes = () => {
   let settings = {};
   let data = container.dataset;
   let conversion = data.abcalculatorConversion;
-  let currentGroupSize = data.abcalculatorCurrentGroupSize;
+  let groupSize = data.abcalculatorGroupSize;
   if (conversion) {
     try {
       settings.conversion = JSON.parse(conversion);
@@ -44,16 +40,16 @@ let getSettingsFromAttrubutes = () => {
       console.warn(`Can't parse conversion from data attribute. ${e.message}`);
     }
   }
-  if (currentGroupSize) {
+  if (groupSize) {
     try {
-      settings.currentGroupSize = JSON.parse(currentGroupSize);
+      settings.groupSize = JSON.parse(groupSize);
     } catch (e) {
       console.warn(`Can't parse current group size from data attribute. ${e.message}`);
     }
   }
   if (data.abcalculatorAlpha) { settings.alpha = data.abcalculatorAlpha }
   if (data.abcalculatorBeta) { settings.beta = data.abcalculatorBeta }
-  if (data.abcalculatorDeltaConversion) { settings.deltaConversion = data.abcalculatorDeltaConversion }
+  if (data.abcalculatorNeededDeltaConversion) { settings.neededDeltaConversion = data.abcalculatorNeededDeltaConversion }
   return settings;
 }
 
@@ -61,7 +57,7 @@ let getSettingsFromFields = () => {
   return {
     alpha: alphaField.value,
     beta: betaField.value,
-    currentGroupSize: [
+    groupSize: [
       aGroupSizeField.value,
       bGroupSizeField.value
     ],
@@ -69,17 +65,17 @@ let getSettingsFromFields = () => {
       aConversionField.value,
       bConversionField.value
     ],
-    deltaConversion: deltaConversionField.value
+    neededDeltaConversion: neededDeltaConversionField.value
   }
 }
 
-let fillFieldFromSettings = ({alpha, beta, currentGroupSize, conversion, deltaConversion}) => {
+let fillFieldFromSettings = ({alpha, beta, groupSize, conversion, neededDeltaConversion}) => {
   if (alpha) { alphaField.value = alpha }
   if (beta) { betaField.value = beta }
-  if (deltaConversion) { deltaConversionField.value = deltaConversion }
-  if (currentGroupSize) {
-    aGroupSizeField.value = currentGroupSize[0];
-    bGroupSizeField.value = currentGroupSize[1];
+  if (neededDeltaConversion) { neededDeltaConversionField.value = neededDeltaConversion }
+  if (groupSize) {
+    aGroupSizeField.value = groupSize[0];
+    bGroupSizeField.value = groupSize[1];
   }
   if (conversion) {
     aConversionField.value = conversion[0];
@@ -87,7 +83,7 @@ let fillFieldFromSettings = ({alpha, beta, currentGroupSize, conversion, deltaCo
   }
 }
 
-let renderCalculator = (event) => {
+let renderCalculator = () => {
   if (!initiated) {
     fillFieldFromSettings(getSettingsFromAttrubutes())
     initiated = true;
@@ -98,6 +94,7 @@ let renderCalculator = (event) => {
     getSettingsFromFields()
   )
   data = ABGroupSize(data);
+  console.log(data);
 
   if (!(data instanceof Error)) {
     if (data.conversionRate) {
@@ -113,7 +110,7 @@ let renderCalculator = (event) => {
 
 // Bind render to all controls
 [
-  alphaField, betaField, deltaConversionField, aGroupSizeField, bGroupSizeField,
+  alphaField, betaField, neededDeltaConversionField, aGroupSizeField, bGroupSizeField,
   aConversionField, bConversionField
 ].forEach((control) => {
   ['change', 'click', 'keyup'].forEach((eventName) => {
