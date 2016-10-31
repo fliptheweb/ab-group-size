@@ -16,7 +16,7 @@ const MESSAGES = {
     } else {
       missingAmount = `${neededGroupSize[0] - groupSize[0]} in first and ${neededGroupSize[1] - groupSize[1]} in second group`;
     }
-    return `It\`s not enough traffic in groups, need ${missingAmount}. Current delta conversion ${deltaConversion.toFixed(CONVERSION_ACCURACY)}.`;
+    return `It\`s not enough traffic in groups, need ${missingAmount}.`;
   },
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
   NOT_MINIMUM_DELTA_CONVERSION: (neededDeltaConversion, deltaConversion) =>

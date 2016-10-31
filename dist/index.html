@@ -4,18 +4,22 @@
 </head>
 <body>
 
-<div class="ab-calculator"
+<div class="ab-calculator is-winner-a"
   data-abcalculator-alpha="5"
   data-abcalculator-beta="20"
   data-abcalculator-needed-delta-conversion="5"
   data-abcalculator-group-size="[10000,10000]"
   data-abcalculator-conversion="[5000, 5100]"
   >
+  <div class="ab-calculator__result">
+    <h3>Result:</h3>
+    <p class="ab-calculator__result-message">result :)</p>
+  </div>
   <div class="ab-calculator__data">
     <table class="ab-calculator__table">
       <thead>
         <tr>
-          <th></th>
+          <th class="ab-calculator__heading-group"></th>
           <th class="ab-calculator__heading-group-size">The number of visitors on page was:</th>
           <th class="ab-calculator__heading-conversion">The number of overall conversions was:</th>
           <th class="ab-calculator__heading-conversion-rate">Convertion rate:</th>
@@ -23,7 +27,7 @@
       </thead>
       <tbody>
         <tr>
-          <td class="ab-calculator__group">A</td>
+          <td class="ab-calculator__group --a">A</td>
           <td><input id="a-group-size" class="ab-calculator__field" type="number" min="0" step="1"/></td>
           <td><input id="a-conversion" class="ab-calculator__field" type="number" min="0" step="1"/></td>
           <td id="a-conversion-rate"></td>
@@ -32,10 +36,12 @@
           <td></td>
           <td></td>
           <td></td>
-          <td class="ab-calculator__delta-conversion" title="Current delta between conversion rates">Δ 5%</td>
+          <td class="ab-calculator__delta-conversion" title="Relative delta between conversion rates">
+            Δ <span id="delta-conversion">5</span>%
+          </td>
         </tr>
         <tr>
-          <td class="ab-calculator__group">B</td>
+          <td class="ab-calculator__group --b">B</td>
           <td><input id="b-group-size" class="ab-calculator__field" type="number" min="0" step="1"/></td>
           <td><input id="b-conversion" class="ab-calculator__field" type="number" min="0" step="1"/></td>
           <td id="b-conversion-rate"></td>
@@ -43,11 +49,6 @@
       </tbody>
     </table>
   </div>
-  <div class="ab-calculator__result">
-    <h3>Result:</h3>
-    <p>result :)</p>
-  </div>
-  <span class="ab-calculator__settings-button"></span>
   <div class="ab-calculator__settings">
     <h3>Settings:</h3>
     <div class="ab-calculator__settings-row">
@@ -63,55 +64,15 @@
       <input id="needed-delta-conversion" class="ab-calculator__field" type="number" min="0" max="100" step="1"/>
     </div>
   </div>
+  <span class="ab-calculator__settings-button" id="settings-button"></span>
 </div>
 
-<div class="ab-calculator"
-  data-abcalculator-alpha="5"
-  data-abcalculator-beta="20"
-  data-abcalculator-needed-delta-conversion="5"
-  data-abcalculator-group-size="[10000,10000]"
-  data-abcalculator-conversion="[5000, 5100]"
-  >
-  <table>
-    <thead>
-      <tr>
-        <th></th>
-        <th>Size:</th>
-        <th>Conversion:</th>
-        <th>Conversion rate:</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>A</strong></td>
-        <td><input id="a-group-size" type="number" min="0" step="1"/></td>
-        <td><input id="a-conversion" type="number" min="0" step="1"/></td>
-        <td id="a-conversion-rate"></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td id="delta-conversion-"></td>
-        <td id="delta-conversion-rate-"></td>
-      </tr>
-      <tr>
-        <td><strong>B</strong></td>
-        <td><input id="b-group-size" type="number" min="0" step="1"/></td>
-        <td><input id="b-conversion" type="number" min="0" step="1"/></td>
-        <td id="b-conversion-rate"></td>
-      </tr>
-    </tbody>
-  </table>
+
   <div class="ab-calculator__result-message"></div>
-  <div class="ab-calculator__settings">
-    <h4>Settings:</h4>
-    <p>Alpha (I-type error): <input id="alpha" type="number" min="0" max="100" step="1"/></p>
-    <p>Beta (II-type error): <input id="beta" type="number" min="0" max="100" step="1"/></p>
-    <p>Minimum delta conversion<sup>*</sup></p>
-  </div>
-</div>
 
-<pre id="result">
+
+
+<pre >
 </pre>
 
 <script src="ab_calculator.js"></script>

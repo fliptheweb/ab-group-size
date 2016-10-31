@@ -18,11 +18,13 @@ let aConversionField = document.getElementById('a-conversion');
 let bConversionField = document.getElementById('b-conversion');
 let aConversionRateField = document.getElementById('a-conversion-rate');
 let bConversionRateField = document.getElementById('b-conversion-rate');
+let deltaConversionField = document.getElementById('delta-conversion');
 
 // Settings
 let alphaField = document.getElementById('alpha');
 let betaField = document.getElementById('beta');
 let neededDeltaConversionField = document.getElementById('needed-delta-conversion');
+let settingsButton = document.getElementById('settings-button');
 
 // Result
 let result = document.getElementById('result');
@@ -118,6 +120,7 @@ let renderCalculator = (settingFromParams) => {
       aConversionRateField.innerHTML = data.conversionRate[0] + '%';
       bConversionRateField.innerHTML = data.conversionRate[1] + '%';
     }
+    deltaConversionField.innerHTML = data.deltaConversion.toFixed(2);
     resultMessage.innerHTML = data.text.join('<br/>');
     result.innerHTML = JSON.stringify(data, null, 2);
   } else {
@@ -134,6 +137,8 @@ let renderCalculator = (settingFromParams) => {
     control.addEventListener(eventName, renderCalculator);
   })
 })
+
+settingsButton.addEventListener('click', () => container.classList.toggle('is-settings-opened'))
 
 // Initial
 renderCalculator();

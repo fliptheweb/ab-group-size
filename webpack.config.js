@@ -16,6 +16,9 @@ module.exports = {
         'css-loader?importLoaders=1',
         'postcss-loader'
       ]
+    }, {
+      test: /\.svg$/,
+      loader: 'file-loader'
     }]
   },
   postcss: function () {
