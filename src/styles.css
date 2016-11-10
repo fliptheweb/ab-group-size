@@ -1,18 +1,23 @@
 $color-gray: #B1B1B1;
 $color-black: #222222;
+$color-red: #FF645E;
+$color-blue: #C3E9F4;
 
 .ab-calculator {
+  all: initial;
+  display: block;
   box-sizing: border-box;
   font-family: 'OpenSans', Tahoma, Arial, serif;
   padding: 10px;
   padding-bottom: 15px;
   width: 580px;
-  height: 150px;
+  height: 190px;
   position: relative;
   color: $color-black;
   border: 1px solid #E4E4E4;
   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.10), 0px 1px 1px 0px rgba(0,0,0,0.05);
   border-radius: 3px;
+  overflow: hidden;
 
   h3 {
     margin: 0;
@@ -47,6 +52,7 @@ $color-black: #222222;
   &__data {
     width: 320px;
     position: relative;
+    margin-top: 20px;
 
     &::before {
       content: '';
@@ -142,13 +148,20 @@ $color-black: #222222;
   }
 
   &__settings {
-    background: #F0F0F0;
-    border-radius: 3px;
-    padding: 15px;
+    box-sizing: border-box;
+    width: 250px;
+    padding: 20px 44px;
+    background: #EEFCFF;
+    border-radius: 0 3px 3px 0;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 0;
+    top: 0;
+    bottom: 0;
     display: none;
+
+    h3 {
+      margin-bottom: 10px;
+    }
 
     .is-settings-opened & {
       display: block;
@@ -157,6 +170,31 @@ $color-black: #222222;
 
   &__settings-row {
     clear: both;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+
+    label {
+      color: $color-gray;
+      font-size: 9px;
+      max-width: 90px;
+    }
+  }
+
+  &__settings-value {
+
+  }
+
+  &__settings-field {
+    width: 50px;
+  }
+
+  &__settings-percent {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
   }
 
   &__settings-button {

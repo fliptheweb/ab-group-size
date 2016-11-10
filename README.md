@@ -34,7 +34,7 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 ```
 
 # TODO
-- [ ] Do nice design;
+- [x] Do nice design;
 - [ ] Save settings to cookies;
 - [x] Extract browser.js to index.js with all methods;
 - [x] Settings from data attribute;
@@ -42,3 +42,4 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [ ] Generate html inside;
 - [ ] Rewrite cli version;
 - [ ] Add tests;
+- [ ] to fix numbers and infinity = ∞

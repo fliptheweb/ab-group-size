@@ -53,15 +53,24 @@
     <h3>Settings:</h3>
     <div class="ab-calculator__settings-row">
       <label for="">Alpha (I-type error):</label>
-      <input id="alpha" class="ab-calculator__field" type="number" min="0" max="100" step="1"/>
+      <div class="ab-calculator__settings-value">
+        <input id="alpha" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
+        <span class="ab-calculator__settings-percent">%</span>
+      </div>
     </div>
     <div class="ab-calculator__settings-row">
       <label for="">Beta (II-type error):</label>
-      <input id="beta" class="ab-calculator__field" type="number" min="0" max="100" step="1"/>
+      <div class="ab-calculator__settings-value">
+        <input id="beta" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
+        <span class="ab-calculator__settings-percent">%</span>
+      </div>
     </div>
     <div class="ab-calculator__settings-row">
       <label for="">Minimum delta conversion:</label>
-      <input id="needed-delta-conversion" class="ab-calculator__field" type="number" min="0" max="100" step="1"/>
+      <div class="ab-calculator__settings-value">
+        <input id="needed-delta-conversion" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
+        <span class="ab-calculator__settings-percent">%</span>
+      </div>
     </div>
   </div>
   <span class="ab-calculator__settings-button" id="settings-button"></span>
