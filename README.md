@@ -35,11 +35,11 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 
 # TODO
 - [x] Do nice design;
-- [ ] Save settings to cookies;
 - [x] Extract browser.js to index.js with all methods;
 - [x] Settings from data attribute;
-- [ ] Extract errors to const;
-- [ ] Generate html inside;
+- [x] Extract errors to const;
+- [ ] Generate html inside – html-webpack-plugin
 - [ ] Rewrite cli version;
 - [ ] Add tests;
-- [ ] to fix numbers and infinity = ∞
+- [ ] to fix numbers
+- [ ] output & libraryTarget

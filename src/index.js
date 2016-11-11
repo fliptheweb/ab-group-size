@@ -10,17 +10,12 @@ const MESSAGES = {
   WINNER_SECOND: 'Second variant are winner.',
   WINNER_EQUAL: 'Both variants are equal.',
   NOT_ENOUGH: (neededGroupSize, groupSize, deltaConversion) => {
-    let missingAmount = '';
-    if (groupSize[0] === groupSize[1]) {
-      missingAmount = `${neededGroupSize[0] - groupSize[0]} more per both groups`;
-    } else {
-      missingAmount = `${neededGroupSize[0] - groupSize[0]} in first and ${neededGroupSize[1] - groupSize[1]} in second group`;
-    }
-    return `It\`s not enough traffic in groups, need ${missingAmount}.`;
+    let missingAmount = Math.max(neededGroupSize[0] - groupSize[0], neededGroupSize[1] - groupSize[1]);
+    return `It\`s not enough traffic in groups, need at least <span class="ab-calculator__mark">${(missingAmount).toLocaleString()}</span> more per both groups.`;
   },
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
   NOT_MINIMUM_DELTA_CONVERSION: (neededDeltaConversion, deltaConversion) =>
-    `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}). Current – ${deltaConversion.toFixed(CONVERSION_ACCURACY)}. Now both variants are equal.`,
+    `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}). Now both variants are equal.`,
   ERROR_CONVERSIONS_LENGTH: 'You must pass 2 conversion value, like [3, 3.2].',
   ERROR_CONVERSIONS_VALID: 'You must pass valid conversion values.',
   ERROR_GROUP_SIZE: 'You must pass 2 group size value, like [1000, 1000].',
@@ -99,7 +94,7 @@ let ABGroupSize = {
     result.neededGroupSize = ABGroupSize.getNeededGroupSize(data);
 
     if (data.groupSize && data.groupSize.length === 2 && result.neededGroupSize) {
-      result.deltaConversion = Math.abs(100 - (data.conversion[1] / (data.conversion[0] / 100)));
+      result.deltaConversion = ABGroupSize._getDeltaConversion(data.conversion);
       let isEnoughDeltaConversion = !(data.neededDeltaConversion && data.neededDeltaConversion > result.deltaConversion);
       let isEnoughData = false;
       let isNeededGroupSizeInfitity = result.neededGroupSize[0] === Infinity;
@@ -180,6 +175,14 @@ let ABGroupSize = {
     ];
   },
 
+  // Calculate delta between conversions
+  _getDeltaConversion: ([conversion1, conversion2]) => {
+    if (conversion2 > conversion1) {
+      [conversion2, conversion1] = [conversion1, conversion2]
+    }
+    return Math.abs(100 - (conversion1 / (conversion2 / 100)));
+  },
+
   _conversionToConversionRate: (sizeOfGroup, conversion) => {
     return (parseInt(conversion) / (parseInt(sizeOfGroup) / 100)).toFixed(CONVERSION_ACCURACY);
   },
@@ -235,7 +238,7 @@ let ABGroupSize = {
     }
 
     if (isConversionValid && isGroupSizeValid) {
-      if (conversion[0] >= groupSize[0] || conversion[1] >= groupSize[1]) {
+      if (conversion[0] > groupSize[0] || conversion[1] > groupSize[1]) {
         errors.push(getMessage('ERROR_CONVERSION_MORE_THAN_GROUP'));
       }
 

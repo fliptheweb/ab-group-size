@@ -27,7 +27,6 @@ let neededDeltaConversionField = document.getElementById('needed-delta-conversio
 let settingsButton = document.getElementById('settings-button');
 
 // Result
-let result = document.getElementById('result');
 let resultMessage = document.querySelector('.ab-calculator__result-message');
 
 let getSettingsFromAttrubutes = () => {
@@ -116,13 +115,17 @@ let renderCalculator = (settingFromParams) => {
   data = ABGroupSize(data);
 
   if (!(data instanceof Error)) {
+    container.classList.remove('is-winner-a', 'is-winner-b');
     if (data.conversionRate) {
       aConversionRateField.innerHTML = data.conversionRate[0] + '%';
       bConversionRateField.innerHTML = data.conversionRate[1] + '%';
     }
-    deltaConversionField.innerHTML = data.deltaConversion.toFixed(2);
+    if (data.winner) {
+      container.classList.add(data.winner === 1 ? 'is-winner-a' : 'is-winner-b');
+    }
+    deltaConversionField.innerHTML = isFinite(data.deltaConversion) ? data.deltaConversion.toFixed(2) + '%' : '∞';
     resultMessage.innerHTML = data.text.join('<br/>');
-    result.innerHTML = JSON.stringify(data, null, 2);
+    // result.innerHTML = JSON.stringify(data, null, 2);
   } else {
     resultMessage.innerHTML = 'Errors: ' + data.message;
   }

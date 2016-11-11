@@ -21,7 +21,7 @@ $color-blue: #C3E9F4;
 
   h3 {
     margin: 0;
-    margin-bottom: 2px;
+    margin-bottom: 10px;
     font-size: 15px;
   }
 
@@ -50,7 +50,7 @@ $color-blue: #C3E9F4;
   }
 
   &__data {
-    width: 320px;
+    width: 330px;
     position: relative;
     margin-top: 20px;
 
@@ -119,6 +119,7 @@ $color-blue: #C3E9F4;
   &__delta-conversion {
     font-size: 10px;
     color: $color-gray;
+    white-space: nowrap;
   }
 
   &__group {
@@ -141,30 +142,36 @@ $color-blue: #C3E9F4;
   }
 
   &__result {
+    box-sizing: border-box;
     font-size: 14px;
     float: right;
-    width: 210px;
-    padding-top: 10px;
+    width: 220px;
+    padding-top: 25px;
+    padding-left: 30px;
   }
 
   &__settings {
     box-sizing: border-box;
-    width: 250px;
-    padding: 20px 44px;
+    width: 240px;
+    padding: 30px 45px 20px 40px;
     background: #EEFCFF;
     border-radius: 0 3px 3px 0;
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
-    display: none;
+    transform: translateX(100%);
+    transform-origin: right;
+    transition: all .3s ease-in-out;
+    pointer-events: none;
 
     h3 {
-      margin-bottom: 10px;
+
     }
 
     .is-settings-opened & {
-      display: block;
+      pointer-events: auto;
+      transform: translateX(0);
     }
   }
 
@@ -178,8 +185,9 @@ $color-blue: #C3E9F4;
 
     label {
       color: $color-gray;
+      display: block;
       font-size: 9px;
-      max-width: 90px;
+      width: 85px;
     }
   }
 
@@ -209,6 +217,10 @@ $color-blue: #C3E9F4;
     .is-settings-opened & {
       background-image: url('./close.svg');
     }
+  }
+
+  &__mark {
+    color: $color-red;
   }
 
   &.is-winner-a {
