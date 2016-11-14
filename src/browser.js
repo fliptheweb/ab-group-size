@@ -1,33 +1,34 @@
 'use strict'
 require('./styles.css');
+let template = require('./index.html');
 let ABGroupSize = require('../src/index');
 let initiated = false;
-let defaultData = {
+let DEFAULT_DATA = {
   alpha: 5,
   beta: 20,
   deltaConversion: 5
 }
 
-//
+let container = document.getElementById('ab-calculator');
+container.innerHTML = template;
+
 // Format result
-//
-let container = document.querySelector('.ab-calculator');
-let aGroupSizeField = document.getElementById('a-group-size');
-let bGroupSizeField = document.getElementById('b-group-size');
-let aConversionField = document.getElementById('a-conversion');
-let bConversionField = document.getElementById('b-conversion');
-let aConversionRateField = document.getElementById('a-conversion-rate');
-let bConversionRateField = document.getElementById('b-conversion-rate');
-let deltaConversionField = document.getElementById('delta-conversion');
+let aGroupSizeField = container.querySelector('#a-group-size');
+let bGroupSizeField = container.querySelector('#b-group-size');
+let aConversionField = container.querySelector('#a-conversion');
+let bConversionField = container.querySelector('#b-conversion');
+let aConversionRateField = container.querySelector('#a-conversion-rate');
+let bConversionRateField = container.querySelector('#b-conversion-rate');
+let deltaConversionField = container.querySelector('#delta-conversion');
 
 // Settings
-let alphaField = document.getElementById('alpha');
-let betaField = document.getElementById('beta');
-let neededDeltaConversionField = document.getElementById('needed-delta-conversion');
-let settingsButton = document.getElementById('settings-button');
+let alphaField = container.querySelector('#alpha');
+let betaField = container.querySelector('#beta');
+let neededDeltaConversionField = container.querySelector('#needed-delta-conversion');
+let settingsButton = container.querySelector('#settings-button');
 
 // Result
-let resultMessage = document.querySelector('.ab-calculator__result-message');
+let resultMessage = container.querySelector('.ab-calculator__result-message');
 
 let getSettingsFromAttrubutes = () => {
   let settings = {};
@@ -101,7 +102,7 @@ let renderCalculator = (settingFromParams) => {
     initiated = true;
     data = Object.assign(
       {},
-      defaultData,
+      DEFAULT_DATA,
       getSettingsFromAttrubutes()
     );
     fillFieldFromSettings(data);
@@ -125,7 +126,6 @@ let renderCalculator = (settingFromParams) => {
     }
     deltaConversionField.innerHTML = isFinite(data.deltaConversion) ? data.deltaConversion.toFixed(2) + '%' : '∞';
     resultMessage.innerHTML = data.text.join('<br/>');
-    // result.innerHTML = JSON.stringify(data, null, 2);
   } else {
     resultMessage.innerHTML = 'Errors: ' + data.message;
   }

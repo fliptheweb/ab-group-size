@@ -38,7 +38,7 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [x] Extract browser.js to index.js with all methods;
 - [x] Settings from data attribute;
 - [x] Extract errors to const;
-- [ ] Generate html inside – html-webpack-plugin
+- [x] Generate html inside – html-webpack-plugin
 - [ ] Rewrite cli version;
 - [ ] Add tests;
 - [ ] to fix numbers

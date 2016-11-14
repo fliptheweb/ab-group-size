@@ -4,85 +4,13 @@
 </head>
 <body>
 
-<div class="ab-calculator"
+<div id="ab-calculator"
   data-abcalculator-alpha="5"
   data-abcalculator-beta="20"
   data-abcalculator-needed-delta-conversion="5"
   data-abcalculator-group-size="[10000,10000]"
   data-abcalculator-conversion="[5000, 5100]"
-  >
-  <div class="ab-calculator__result">
-    <h3>Result:</h3>
-    <p class="ab-calculator__result-message">result :)</p>
-  </div>
-  <div class="ab-calculator__data">
-    <table class="ab-calculator__table">
-      <thead>
-        <tr>
-          <th class="ab-calculator__heading-group"></th>
-          <th class="ab-calculator__heading-group-size">The number of visitors on page was:</th>
-          <th class="ab-calculator__heading-conversion">The number of overall conversions was:</th>
-          <th class="ab-calculator__heading-conversion-rate">Convertion rate:</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="ab-calculator__group --a">A</td>
-          <td><input id="a-group-size" class="ab-calculator__field" type="number" min="0" step="1"/></td>
-          <td><input id="a-conversion" class="ab-calculator__field" type="number" min="0" step="1"/></td>
-          <td id="a-conversion-rate"></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="ab-calculator__delta-conversion" title="Relative delta between conversion rates">
-            Δ <span id="delta-conversion">5 %</span>
-          </td>
-        </tr>
-        <tr>
-          <td class="ab-calculator__group --b">B</td>
-          <td><input id="b-group-size" class="ab-calculator__field" type="number" min="0" step="1"/></td>
-          <td><input id="b-conversion" class="ab-calculator__field" type="number" min="0" step="1"/></td>
-          <td id="b-conversion-rate"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="ab-calculator__settings">
-    <h3>Settings:</h3>
-    <div class="ab-calculator__settings-row">
-      <label for="">Alpha (I-type error):</label>
-      <div class="ab-calculator__settings-value">
-        <input id="alpha" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
-        <span class="ab-calculator__settings-percent">%</span>
-      </div>
-    </div>
-    <div class="ab-calculator__settings-row">
-      <label for="">Beta (II-type error):</label>
-      <div class="ab-calculator__settings-value">
-        <input id="beta" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
-        <span class="ab-calculator__settings-percent">%</span>
-      </div>
-    </div>
-    <div class="ab-calculator__settings-row">
-      <label for="">Minimum delta conversion:</label>
-      <div class="ab-calculator__settings-value">
-        <input id="needed-delta-conversion" class="ab-calculator__field ab-calculator__settings-field" type="number" min="0" max="100" step="1"/>
-        <span class="ab-calculator__settings-percent">%</span>
-      </div>
-    </div>
-  </div>
-  <span class="ab-calculator__settings-button" id="settings-button"></span>
-</div>
-
-
-  <div class="ab-calculator__result-message"></div>
-
-
-
-<pre >
-</pre>
+></div>
 
 <script src="ab_calculator.js"></script>
 
