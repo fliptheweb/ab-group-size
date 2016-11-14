@@ -41,5 +41,5 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [x] Generate html inside – html-webpack-plugin
 - [ ] Rewrite cli version;
 - [ ] Add tests;
-- [ ] to fix numbers
+- [x] to fix numbers
 - [ ] output & libraryTarget

@@ -94,7 +94,7 @@ let ABGroupSize = {
     result.neededGroupSize = ABGroupSize.getNeededGroupSize(data);
 
     if (data.groupSize && data.groupSize.length === 2 && result.neededGroupSize) {
-      result.deltaConversion = ABGroupSize._getDeltaConversion(data.conversion);
+      result.deltaConversion = ABGroupSize._getDeltaConversion(data.conversionRate);
       let isEnoughDeltaConversion = !(data.neededDeltaConversion && data.neededDeltaConversion > result.deltaConversion);
       let isEnoughData = false;
       let isNeededGroupSizeInfitity = result.neededGroupSize[0] === Infinity;

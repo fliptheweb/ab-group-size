@@ -1,8 +1,8 @@
 'use strict'
 require('./styles.css');
-let template = require('./index.html');
+let template = require('./template.html');
 let ABGroupSize = require('../src/index');
-let initiated = false;
+let initialized = false;
 let DEFAULT_DATA = {
   alpha: 5,
   beta: 20,
@@ -19,7 +19,6 @@ let aConversionField = container.querySelector('#a-conversion');
 let bConversionField = container.querySelector('#b-conversion');
 let aConversionRateField = container.querySelector('#a-conversion-rate');
 let bConversionRateField = container.querySelector('#b-conversion-rate');
-let deltaConversionField = container.querySelector('#delta-conversion');
 
 // Settings
 let alphaField = container.querySelector('#alpha');
@@ -29,6 +28,8 @@ let settingsButton = container.querySelector('#settings-button');
 
 // Result
 let resultMessage = container.querySelector('.ab-calculator__result-message');
+let minimumGroupSize = container.querySelector('.ab-calculator__needed-group-size');
+let deltaConversionField = container.querySelector('.ab-calculator__delta-conversion');
 
 let getSettingsFromAttrubutes = () => {
   let settings = {};
@@ -98,8 +99,8 @@ let fillFieldFromSettings = ({alpha, beta, groupSize, conversion, neededDeltaCon
 
 let renderCalculator = (settingFromParams) => {
   let data = {}
-  if (!initiated) {
-    initiated = true;
+  if (!initialized) {
+    initialized = true;
     data = Object.assign(
       {},
       DEFAULT_DATA,
@@ -115,8 +116,8 @@ let renderCalculator = (settingFromParams) => {
   }
   data = ABGroupSize(data);
 
+  container.classList.remove('is-winner-a', 'is-winner-b');
   if (!(data instanceof Error)) {
-    container.classList.remove('is-winner-a', 'is-winner-b');
     if (data.conversionRate) {
       aConversionRateField.innerHTML = data.conversionRate[0] + '%';
       bConversionRateField.innerHTML = data.conversionRate[1] + '%';
@@ -124,9 +125,12 @@ let renderCalculator = (settingFromParams) => {
     if (data.winner) {
       container.classList.add(data.winner === 1 ? 'is-winner-a' : 'is-winner-b');
     }
-    deltaConversionField.innerHTML = isFinite(data.deltaConversion) ? data.deltaConversion.toFixed(2) + '%' : '∞';
+    deltaConversionField.innerHTML = `Δ ${data.deltaConversion.toFixed(2).toLocaleString()}`;
+    minimumGroupSize.innerText = `min ${Math.max(...data.neededGroupSize).toLocaleString()}`;
     resultMessage.innerHTML = data.text.join('<br/>');
   } else {
+    deltaConversionField.innerHTML = '';
+    minimumGroupSize.innerText = '';
     resultMessage.innerHTML = 'Errors: ' + data.message;
   }
 }

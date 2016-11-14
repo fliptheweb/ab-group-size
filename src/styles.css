@@ -116,10 +116,12 @@ $color-blue: #C3E9F4;
     width: 50px;
   }
 
+  &__needed-group-size,
   &__delta-conversion {
     font-size: 10px;
     color: $color-gray;
     white-space: nowrap;
+    height: 14px;
   }
 
   &__group {
