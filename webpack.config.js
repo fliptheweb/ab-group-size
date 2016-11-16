@@ -2,7 +2,8 @@ module.exports = {
   entry: './src/browser.js',
   output: {
     path: './dist',
-    filename: 'ab_calculator.js'
+    filename: 'ab_calculator.js',
+    library: 'ab_calculator'
   },
   module: {
     loaders: [{
