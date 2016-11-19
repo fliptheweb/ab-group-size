@@ -1,11 +1,31 @@
-# AB Group Size ![travis](https://travis-ci.org/fliptheweb/ab-group-size.svg)
-Simple calculator for computing group size of A/B tests.
+# AB Calculator ![travis](https://travis-ci.org/fliptheweb/ab-group-size.svg)
+Хотите убедиться в результатах АБ-теста? Тогда этот скрипт для вас.
 
-Installation:
+Нельзя просто поделить трафик на две группы и через какое-то время объявить победителя на основе наибольшей конверсии.
+Результат обязан быть статистически значимым, а размер тестируемых групп удовлетворять определенным условиям. Существует несколько методов статистической проверки гипотез.
+Данный калькулятор использует для расчета метод z-критерия Фишера (Z-test) с несколькими изменяемыми параметрами:
+- уровень значимости (вероятность ошибки первого рода, false positive, α) — вероятность отклонить гипотезу, которая на самом деле верна.
+- вероятность ошибки второго рода, false negative, β (статистическая мощность = 1 - β) — вероятность принять гипотезу, которая на самом деле ложная.
+- минимальная разность конверсий при которой вариант считается победителем.
 
 Library have browser, node.js and cli versions.
 
 ## Browser
+Init script to some DOM element
+```html
+<div id="ab-calculator"
+  data-abcalculator-alpha="5"
+  data-abcalculator-beta="20"
+  data-abcalculator-needed-delta-conversion="5"
+  data-abcalculator-group-size="[10000,10000]"
+  data-abcalculator-conversion="[5000, 5100]"
+></div>
+
+<script src="ab_calculator.js"></script>
+<script>
+  ab_calculator(document.getElementById('ab-calculator'));
+</script>
+```
 You can pass settings by:
 1. Data-attributes;
 2. ABGroupSize initializer;
@@ -13,7 +33,7 @@ You can pass settings by:
 
 ## Node.js
 ```sh
-npm install --save ab-group-size
+npm install ab-group-size
 ```
 
 Usage:
@@ -44,3 +64,5 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [x] to fix numbers;
 - [ ] output & libraryTarget;
 - [ ] add Normal readme;
+- [ ] implement t-test;
+- [ ] implement ANOVA-test;

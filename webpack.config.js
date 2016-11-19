@@ -1,15 +1,20 @@
+let config = {
+  production: process.env.NODE_ENV === 'production'
+}
+
 module.exports = {
   entry: './src/browser.js',
   output: {
     path: './dist',
     filename: 'ab_calculator.js',
-    library: 'ab_calculator'
+    library: 'ab_calculator',
+    libraryTarget: 'umd'
   },
   module: {
     loaders: [{
       test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'babel'
+      loader: 'babel?cacheDirectory'
     }, {
       test: /\.css$/,
       loaders: [
