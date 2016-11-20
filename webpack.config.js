@@ -1,14 +1,20 @@
-let config = {
-  production: process.env.NODE_ENV === 'production'
+let webpack = require('webpack');
+let UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+let env = process.env.WEBPACK_ENV || 'development';
+let plugins = [];
+
+if (env === 'production') {
+  plugins.push(new UglifyJsPlugin({minimize: true}))
 }
 
 module.exports = {
-  entry: './src/browser.js',
+  entry: './src/ab_calculator.browser.js',
   output: {
     path: './dist',
-    filename: 'ab_calculator.js',
+    filename: 'ab_calculator.browser.js',
     library: 'ab_calculator',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   module: {
     loaders: [{
@@ -24,7 +30,7 @@ module.exports = {
       ]
     }, {
       test: /\.svg$/,
-      loader: 'file-loader'
+      loader: 'url'
     }, {
       test: /\.html$/,
       loader: 'html'
@@ -35,5 +41,6 @@ module.exports = {
       require('precss')(),
       require('autoprefixer')()
     ];
-  }
+  },
+  plugins: plugins
 };

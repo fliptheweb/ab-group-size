@@ -28,7 +28,7 @@ Init script to some DOM element
 ```
 You can pass settings by:
 1. Data-attributes;
-2. ABGroupSize initializer;
+2. ABCalculator initializer;
 3. Fill the settings fields.
 
 ## Node.js
@@ -38,9 +38,9 @@ npm install ab-group-size
 
 Usage:
 ```js
-let ABGroupSize = require('ab-group-size');
+let ABCalculator = require('ab-group-size');
 
-ABGroupSize({
+ABCalculator({
   alpha: 5,                // in percent, default = 5
   beta: 20,                // in percent, default = 20
   groupSize: [2000, 2000],
@@ -59,10 +59,10 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [x] Settings from data attribute;
 - [x] Extract errors to const;
 - [x] Generate html inside – html-webpack-plugin
-- [ ] Rewrite cli version;
+- [x] Rewrite cli version;
 - [ ] Add tests;
 - [x] to fix numbers;
-- [ ] output & libraryTarget;
-- [ ] add Normal readme;
+- [x] output & libraryTarget;
+- [x] add Normal readme;
 - [ ] implement t-test;
 - [ ] implement ANOVA-test;

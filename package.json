@@ -3,13 +3,13 @@
   "version": "0.0.2",
   "description": "Simple calculator for computing group size of A/B tests",
   "repository": "https://github.com/fliptheweb/ab-group-size",
-  "main": "./src/index.js",
-  "bin": "./src/cli.js",
-  "browser": "./src/browser.js",
+  "main": "./src/ab_calculator.js",
+  "bin": "./bin/ab_calculator.js",
+  "browser": "./dist/ab_calculator.js",
   "author": "Artur Kornakov <itisshortemailaddress@gmail.com>",
   "scripts": {
     "test": "ava ./test/",
-    "build": "webpack",
+    "build": "WEBPACK_ENV=production webpack",
     "watch": "webpack --color --watch",
     "start": "webpack-dev-server --inline --port 8888 --open --content-base dist/"
   },
@@ -48,6 +48,7 @@
     "postcss-loader": "^1.1.0",
     "precss": "^1.4.0",
     "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   },

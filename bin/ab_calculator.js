@@ -2,7 +2,7 @@
 
 let program = require('commander');
 let packageJson = require('../package.json');
-let ABGroupSize = require('../');
+let ABCalculator = require('../');
 
 program
   .version(packageJson.version)
@@ -17,7 +17,7 @@ program
       if (conversions.length !== 2) {
         throw new Error('You must pass 2 conversions value, like "3, 3.2"');
       }
-      console.log('Group sizes for A/B test – ', ABGroupSize({
+      console.log('Group sizes for A/B test – ', ABCalculator({
         alpha: program.alpha,
         beta: program.beta,
         ratio: program.ratio,

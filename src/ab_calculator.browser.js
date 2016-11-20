@@ -1,7 +1,7 @@
 'use strict'
 require('./styles.css');
 let template = require('./template.html');
-let ABGroupSize = require('../src/index');
+let ABCalculator = require('./ab_calculator');
 let isDom = require('is-dom');
 let initialized = false;
 let DEFAULT_DATA = {
@@ -121,10 +121,10 @@ module.exports = (element) => {
       data = getSettingsFromFields();
     }
     if (!data.conversion || !data.groupSize) {
-      console.log('You must pass conversion and groups size to ABGroupSize plugin')
+      console.log('You must pass conversion and groups size to ABCalculator plugin')
       return;
     }
-    data = ABGroupSize(data);
+    data = ABCalculator(data);
 
     element.classList.remove('is-winner-a', 'is-winner-b');
     if (!(data instanceof Error)) {

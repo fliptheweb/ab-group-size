@@ -25,42 +25,6 @@ const MESSAGES = {
   ERROR_RATIO: `Ratio temporarily must be only ${DEFAULT_RATIO}.`,
   ERROR_CONVERSION_MORE_THAN_GROUP: 'Conversion can`t be more than group size.'
 }
-// const INIT_PARAMS = {
-//   alpha: 5,
-//   beta: 20,
-//   ratio: 1,
-//   deltaConversion: 5
-// }
-
-// var ABCalculator = class {
-//   constructor (params) {
-//
-//   }
-//
-//   static groupSize({alpha, beta, conversionRate, ratio}) => {
-//
-//   }
-//
-//   static normalizeParams() => {
-//
-//   }
-//
-//   static _conversionToConversionRate() => {
-//
-//   }
-//
-//   static _computeCriticalNormalZValue() => {
-//
-//   }
-//
-//   static _probabilityOfNormalZValue() => {
-//
-//   }
-//
-//   static _getTextOfResult() => {
-//
-//   }
-// }
 
 let getMessage = (messageCode, ...params) => {
   if (!MESSAGES[messageCode]) {
@@ -74,9 +38,9 @@ let getMessage = (messageCode, ...params) => {
   }
 }
 
-let ABGroupSize = {
+let ABCalculator = {
   constructor: (params) => {
-    let data = ABGroupSize._validateParams(params);
+    let data = ABCalculator._validateParams(params);
     if (data.errors) {
       let errorsText = data.errors.reduce((result, error) => {
         console.warn(error);
@@ -91,10 +55,10 @@ let ABGroupSize = {
       text: []
     };
 
-    result.neededGroupSize = ABGroupSize.getNeededGroupSize(data);
+    result.neededGroupSize = ABCalculator.getNeededGroupSize(data);
 
     if (data.groupSize && data.groupSize.length === 2 && result.neededGroupSize) {
-      result.deltaConversion = ABGroupSize._getDeltaConversion(data.conversionRate);
+      result.deltaConversion = ABCalculator._getDeltaConversion(data.conversionRate);
       let isEnoughDeltaConversion = !(data.neededDeltaConversion && data.neededDeltaConversion > result.deltaConversion);
       let isEnoughData = false;
       let isNeededGroupSizeInfitity = result.neededGroupSize[0] === Infinity;
@@ -157,8 +121,8 @@ let ABGroupSize = {
     let q2 = 1 - conversionRate[1];
     let pResult = (conversionRate[0] + ratio * conversionRate[1]) / (1 + ratio);
     let qResult = 1 - pResult;
-    let zValue1 = ABGroupSize._computeCriticalNormalZValue(1 - alpha / 2);
-    let zValue2 = ABGroupSize._computeCriticalNormalZValue(1 - beta);
+    let zValue1 = ABCalculator._computeCriticalNormalZValue(1 - alpha / 2);
+    let zValue2 = ABCalculator._computeCriticalNormalZValue(1 - beta);
 
     let groupSize1 = Math.pow(
       (zValue1 * Math.sqrt(
@@ -243,8 +207,8 @@ let ABGroupSize = {
       }
 
       result.conversionRate = [
-        parseFloat(ABGroupSize._conversionToConversionRate(groupSize[0], conversion[0])),
-        parseFloat(ABGroupSize._conversionToConversionRate(groupSize[1], conversion[1]))
+        parseFloat(ABCalculator._conversionToConversionRate(groupSize[0], conversion[0])),
+        parseFloat(ABCalculator._conversionToConversionRate(groupSize[1], conversion[1]))
       ]
     }
 
@@ -285,7 +249,7 @@ let ABGroupSize = {
     }
 
     while ((maxz - minz) > Z_EPSILON) {
-      pval = ABGroupSize._probabilityOfNormalZValue(zval);
+      pval = ABCalculator._probabilityOfNormalZValue(zval);
       if (pval > probability) {
         maxz = zval;
       } else {
@@ -340,8 +304,8 @@ let ABGroupSize = {
 
 module.exports = (data) => {
   if (data) {
-    return ABGroupSize.constructor(data);
+    return ABCalculator.constructor(data);
   } else {
-    return ABGroupSize;
+    return ABCalculator;
   }
 }
