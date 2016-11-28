@@ -19,6 +19,10 @@ $color-blue: #C3E9F4;
   border-radius: 3px;
   overflow: hidden;
 
+  * {
+    box-sizing: border-box;
+  }
+
   h3 {
     margin: 0;
     margin-bottom: 10px;
