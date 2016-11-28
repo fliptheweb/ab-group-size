@@ -216,9 +216,9 @@ $color-blue: #C3E9F4;
     height: 20px;
     cursor: pointer;
 
-    /*.is-settings-opened & {
+    .is-settings-opened & {
       background-image: url('./close.svg');
-    }*/
+    }
   }
 
   &__mark {
