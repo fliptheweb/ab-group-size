@@ -2,11 +2,15 @@
   data-abcalculator-alpha="5"
   data-abcalculator-beta="20"
   data-abcalculator-needed-delta-conversion="5"
-  data-abcalculator-group-size="[10000,10000]"
-  data-abcalculator-conversion="[5000, 5100]"
+
 ></div>
 
-<script src="ab_calculator.js"></script>
+<!-- data-abcalculator-group-size="[10000,10000]"
+data-abcalculator-conversion="[5000, 5100]" -->
+
+<script src="ab_calculator.browser.js"></script>
 <script>
+  document.getElementById('ab-calculator').dataset.abcalculatorGroupSize = '[10000,10000]'
+  document.getElementById('ab-calculator').dataset.abcalculatorConversion = '[5000, 5100]'
   ab_calculator(document.getElementById('ab-calculator'));
 </script>

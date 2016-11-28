@@ -62,6 +62,8 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [x] Generate html inside – html-webpack-plugin
 - [x] Rewrite cli version;
 - [ ] Add tests;
+- [ ] test with no pass params, how it looks;
+- [ ] ability to add data throught dataset https://www.dropbox.com/s/dh3e9s3h8hqz0ml/Screenshot%202016-11-28%2021.17.54.png?dl=0
 - [x] to fix numbers;
 - [x] output & libraryTarget;
 - [x] add Normal readme;
