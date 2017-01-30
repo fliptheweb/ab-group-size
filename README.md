@@ -11,7 +11,7 @@
 Library have browser, node.js and cli versions.
 
 ## Browser
-CDN url – http://fliptheweb.github.io/ab-group-size/dist/ab_calculator.js
+CDN url – https://unpkg.com/ab-group-size
 Init script to some DOM element
 ```html
 <div id="ab-calculator"
