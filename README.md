@@ -65,6 +65,7 @@ ab-group-size --alpha 5 --beta 20 "3, 3.2"
 - [ ] test with no pass params, how it looks;
 - [ ] ability to add data throught dataset https://www.dropbox.com/s/dh3e9s3h8hqz0ml/Screenshot%202016-11-28%2021.17.54.png?dl=0
 - [ ] build on npm
+- [ ] beta 100%, a 100 b 45?
 - [x] to fix numbers;
 - [x] output & libraryTarget;
 - [x] add Normal readme;
