@@ -6,8 +6,8 @@ const DEFAULT_BETA = 20;
 const DEFAULT_RATIO = 1;
 const CONVERSION_ACCURACY = 2;
 const MESSAGES = {
-  WINNER_FIRST: 'First variant are winner.',
-  WINNER_SECOND: 'Second variant are winner.',
+  WINNER_FIRST: 'First variant is winner.',
+  WINNER_SECOND: 'Second variant is winner.',
   WINNER_EQUAL: 'Both variants are equal.',
   NOT_ENOUGH: (neededGroupSize, groupSize, deltaConversion) => {
     let missingAmount = Math.max(neededGroupSize[0] - groupSize[0], neededGroupSize[1] - groupSize[1]);
@@ -15,7 +15,9 @@ const MESSAGES = {
   },
   NO_CURRENT_GROUP: 'We can`t detect winner, because it`s relative to the group size.',
   NOT_MINIMUM_DELTA_CONVERSION: (neededDeltaConversion, deltaConversion) =>
-    `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}). Now both variants are equal.`,
+    `Enough size of both groups riched. But waiting for minimum delta between conversion (${neededDeltaConversion}%). Now both variants are equal.`,
+  NOT_MINIMUM_DELTA_CONVERSION_AND_DATA: (neededDeltaConversion) =>
+    `Waiting for minimum delta between conversion (${neededDeltaConversion}%). Now both variants are equal.`,
   ERROR_CONVERSIONS_LENGTH: 'You must pass 2 conversion value, like [3, 3.2].',
   ERROR_CONVERSIONS_VALID: 'You must pass valid conversion values.',
   ERROR_GROUP_SIZE: 'You must pass 2 group size value, like [1000, 1000].',
@@ -78,6 +80,9 @@ let ABCalculator = {
           result.winner = false;
           result.text.push(getMessage('WINNER_EQUAL'));
         }
+      } else if (!isEnoughData && !isEnoughDeltaConversion) {
+        result.winner = false;
+        result.text.push(getMessage('NOT_MINIMUM_DELTA_CONVERSION_AND_DATA', data.neededDeltaConversion, result.deltaConversion));
       } else if (isEnoughData && !isEnoughDeltaConversion) {
         result.winner = false;
         result.text.push(getMessage('NOT_MINIMUM_DELTA_CONVERSION', data.neededDeltaConversion, result.deltaConversion));
