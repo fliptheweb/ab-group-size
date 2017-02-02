@@ -1,6 +1,6 @@
 {
   "name": "ab-group-size",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Simple calculator for computing group size of A/B tests",
   "repository": "https://github.com/fliptheweb/ab-group-size",
   "main": "./src/ab_calculator.js",
